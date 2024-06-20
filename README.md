@@ -111,7 +111,7 @@ The following is an example of a Rosetta XML script used in the PBEE. In general
 </SIMPLE_METRICS>
 <FILTERS>
 	<ShapeComplementarity name="sc" residue_selector1="partner1" residue_selector2="partner2" confidence="0"/>
-	<ContactMolecularSurface name="cms" distance_weight="0.5" target_selector="partner1" binder_selector="partner2 confidence="0"/>
+	<ContactMolecularSurface name="cms" distance_weight="0.5" target_selector="partner1" binder_selector="partner2" confidence="0"/>
 	<InterfaceHoles name="holes" jump="1" confidence="0"/>
 	<Ddg name="ddg_filter1" scorefxn="beta" jump="1" chain_num="2" repeats="1" repack="0" repack_bound="0" repack_unbound="0" threshold="99999" confidence="0"/>
 </FILTERS>
