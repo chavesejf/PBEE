@@ -44,8 +44,10 @@ flowchart TB
 | xgboost        | 2.0.1   |
 | numpy          | 1.24.4  |
 | pandas         | 2.0.3   |
-| gdown          | 4.7.1   |
 
+**⚠️ Warning**: RosettaCommons binaries are not available in this repository and must be installed and configured correctly before running PBEE. More information on downloading, installing and configuring can be found on the software's website (https://www.rosettacommons.org/).
+
+**⚠️ Warning**: After installing Rosetta on your workstation, it is essential that you compile the DAlphaBall executable in source/external/DAlpahBall. This is done by navigating to main/source/external/DAlpahBall and typing make. (You may need to make platform-specific settings in the Makefile.)
 
 ## Download & Install
 
@@ -58,12 +60,8 @@ clone git https://github.com/eltonjfc/pbee
 #### Step 2 - Open the terminal (ctrl + alt + t) and run the following command: 
 
 ```
-pip3 install -r requirements.txt && python3 update_basemodels.py
+pip3 install -r requirements.txt
 ```
-
-**⚠️ Warning**: RosettaCommons binaries are not available in this repository and must be installed and configured correctly before running PBEE. More information on downloading, installing and configuring can be found on the software's website (https://www.rosettacommons.org/).
-
-**⚠️ Warning**: After installing Rosetta on your workstation, it is essential that you compile the DAlphaBall executable in source/external/DAlpahBall. This is done by navigating to main/source/external/DAlpahBall and typing make. (You may need to make platform-specific settings in the Makefile.)
 
 ## Arguments description
 
