@@ -55,7 +55,7 @@ flowchart TB
 #### Step 1 - Clone this repository on your computer or download it:
 
 ```
-clone git https://github.com/eltonjfc/pbee
+clone git https://github.com/chavesejf/pbee
 ```
 
 #### Step 2 - Open the terminal (ctrl + alt + t) and run the following command: 
