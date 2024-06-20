@@ -467,8 +467,7 @@ def configure_requirements(PbeePATH):
         r1 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/score_jd2.default.*')[0]
         r2 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.default.*')[0]
         r3 = f'{os.environ["ROSETTA3_TOOLS"]}/protein_tools/scripts/clean_pdb.py'
-        r4 = f'{PbeePATH}/train_file.csv'
-        requirements = [r1, r2, r3, r4]
+        requirements = [r1, r2, r3]
         for item in requirements:
             condition = istool(item)
             if condition is False:
