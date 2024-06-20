@@ -2,7 +2,7 @@
 
 # ===================================================================================
 # Name.......: PBEE - Protein Binding Energy Estimator
-# Authors....: Elton J. F. Chaves and Roberto D. Lins
+# Authors....: Roberto D. Lins and Elton J. F. Chaves
 # Contact....: linsrd@gmail.com
 # Description: A pipeline that used ML model based on Rosetta descriptors to predict
 #              the binding affinity of protein-protein complexes.
