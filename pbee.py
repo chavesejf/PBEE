@@ -434,7 +434,7 @@ def header( ):
     print('')
     print(' ********* Protein Binding Energy Estimator *********')
     print('')
-    print(' Authors: Chaves, EJF; Lins, RD')
+    print(' Authors: Lins, RD and Chaves, EJF')
     print('     DOI: -')
     print(' version: -')
     print(' ====================================================')
