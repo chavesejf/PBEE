@@ -71,7 +71,7 @@ def pre_processing(pdbfiles):
             shutil.rmtree(outdir); continue
     return bad_structures
 
-def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlbase):
+def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
     """
 
     Parameters:
@@ -80,7 +80,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlbase):
     - partner1      ->
     - partner2      ->
     - trainedmodels ->
-    - mlbase        ->
+    - mlmodel        ->
 
     Returns:
     
@@ -157,7 +157,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlbase):
                     continue
 
             print_infos(message=f'[{mol}] calculating dGbind', type='protocol')
-            dG_pred = predictor(trainedmodels, mlbase, x_train, y_train, rosetta_features, columns_to_remove)
+            dG_pred = predictor(trainedmodels, mlmodel, x_train, y_train, rosetta_features, columns_to_remove)
             affinity = calc_affinity(dG_pred)
             rosetta_features.insert(0, 'pdb',      basename)
             rosetta_features.insert(1, 'dG_pred',  dG_pred)
@@ -433,8 +433,8 @@ def train_base_models(x, y, models):
         trained_models.append((model.__class__.__name__, model))
     return trained_models
 
-def predictor(trainedmodels, mlbase, x, y, rosetta_features, columns_to_remove):
-    with open(mlbase, 'rb') as f:
+def predictor(trainedmodels, mlmodel, x, y, rosetta_features, columns_to_remove):
+    with open(mlmodel, 'rb') as f:
         meta_model = joblib.load(f)
     if mlengine != 'sl':
         model_predictions = {}
@@ -571,8 +571,7 @@ if (__name__ == "__main__"):
     help='int | cutoff distance (Å) to detect ion(s) close to the protein atoms (default=2)')
     parser.add_argument('--force_mode', action='store_true',
     help='skip warning messages and continue')
-    parser.add_argument('--skip_outliers', action='store_true',
-    help='skip outlier messages and continue')
+
     # ---
     args            = parser.parse_args()
     pdbfiles        = args.ipdb
@@ -582,21 +581,20 @@ if (__name__ == "__main__"):
     force_mode      = args.force_mode
     ion_dist_cutoff = args.ion_dist_cutoff[0]
     mlengine        = args.mlengine[0]
-    mlbase          = mlmodels[mlengine]
-    skip_outliers   = args.skip_outliers
+    mlmodel         = mlmodels[mlengine]
+    skip_outliers   = False
     
     # Mostra parâmetros do script na tela
     # -----------------------------------
     print(f'    rosetta_path: {os.environ["ROSETTA3"]}')
     print(f'    rosetta_path: {os.environ["ROSETTA3_BIN"]}')
     print(f'    rosetta_path: {os.environ["ROSETTA3_TOOLS"]}')
-    print(f'        mlengine: {mlbase}')
+    print(f'        mlengine: {mlmodel}')
     print(f'      output_dir: {odir}')
     print(f'        partner1: {partner1}')
     print(f'        partner2: {partner2}')
     print(f'      force_mode: {force_mode}')
     print(f' ion_dist_cutoff: {ion_dist_cutoff}')
-    print(f'   skip_outliers: {skip_outliers}')
 
     # Pré-processamento
     # -----------------
@@ -610,7 +608,7 @@ if (__name__ == "__main__"):
     # -----------------
     print_infos(message=f'total structures: {len(pdbfiles)}', type='info')
     if len(pdbfiles) != 0:
-        post_processing(pdbfiles, partner1, partner2, trainedmodels, mlbase)
+        post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel)
     else:
         print_infos(message='nothing to do', type='info'); print_end()
 
