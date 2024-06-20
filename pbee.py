@@ -16,16 +16,6 @@ import os, math, time, shutil, argparse, subprocess, glob
 import pandas as pd
 
 def pre_processing(pdbfiles):
-    """
-
-    Parameters:
-    -----------
-    - pdbfiles -> arquivo(s) no formato .pdb
-
-    Returns:
-    - bad_structures -> lista com arquivos no formato .pdb que apresentam gap no backbone
-    
-    """
     bad_structures = []
     for mol, pdb in enumerate(pdbfiles):
         basename = os.path.basename(pdb[:-4])
@@ -72,19 +62,6 @@ def pre_processing(pdbfiles):
     return bad_structures
 
 def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
-    """
-
-    Parameters:
-    -----------
-    - pdbfiles      ->
-    - partner1      ->
-    - partner2      ->
-    - trainedmodels ->
-    - mlmodel        ->
-
-    Returns:
-    
-    """
     for mol, pdb in enumerate(pdbfiles):
         basename = os.path.basename(pdb[:-4])
         outdir = f'{args.odir[0]}/outputs_pbee/{basename}'
@@ -193,20 +170,6 @@ def remove_files(files):
                 os.remove(file)
 
 def partner_checker(pdbfile, partner1, partner2):
-    """
-    
-    Parameters:
-    ----------
-    -pdbfile ->
-    -partner1 ->
-    -partner2 ->
-
-    Returns:
-    --------
-    -count ->
-    -chains ->
-
-    """
     chains, partners = detect_chains(pdbfile), list(partner1 + partner2)
     count = 0
     for chain in chains:
@@ -224,17 +187,6 @@ def detect_chains(pdbfile):
     return chains
 
 def detect_outliers(x, rosetta_features, mol):
-    """
-    
-    Parameters:
-    -----------
-    -x_train ->
-    -rosetta_features ->
-
-    Returns: 
-    
-    --------
-    """
     count = 0
     for col in x.columns:
         for index, row in rosetta_features.iterrows():
@@ -246,17 +198,6 @@ def detect_outliers(x, rosetta_features, mol):
     return count
 
 def calc_affinity(dG):
-    """
-
-    Parameters:
-    -----------
-    dG ->
-
-    Returns:
-    --------
-    affinity ->
-
-    """
     T = 298.15
     R = 8.314
     dG_J = dG * 4184
@@ -273,17 +214,6 @@ def json2csv(json_file, outdir):
     return outfile
 
 def preventing_errors(pdbfile, basename, outdir):
-    """
-
-    Parameters:
-    -----------
-    -pdb1 ->
-    
-    Return:
-    -------
-    -pdb2 ->
-
-    """
     pdb1 = f'{outdir}/{basename}_jd2_01.pdb'
     with open(pdbfile, "r") as input_file, open(pdb1, "w") as output_file:
         ter_found = False
@@ -476,17 +406,6 @@ def configure_requirements(PbeePATH):
         exit()
 
 def configure_mlmodels(PbeePATH):
-    """
-
-    Parameters:
-    -----------
-    -PbeePATH ->
-
-    Returns:
-    --------
-    -trainedmodels ->
-
-    """
     trainedmodels = [
         f'{PbeePATH}/trainedmodels/base_model_LinearRegression.pkl',
         f'{PbeePATH}/trainedmodels/base_model_ElasticNet.pkl',
@@ -506,7 +425,7 @@ def configure_mlmodels(PbeePATH):
 
     return trainedmodels
 
-def header():
+def header( ):
     print('')
     print(' ====================================================')
     print('   Protein Engineering and Structural Genomic Group  ')    
