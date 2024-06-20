@@ -506,7 +506,7 @@ def configure_mlmodels(PbeePATH):
 
     return trainedmodels
 
-def header(version):
+def header():
     print('')
     print(' ====================================================')
     print('   Protein Engineering and Structural Genomic Group  ')    
@@ -529,7 +529,7 @@ if (__name__ == "__main__"):
     submit_dir = os.getcwd()
 
     # Imprime o cabeçalho na tela
-    header(version=1.0)
+    header()
 
     # Define PbeePATH
     PbeePATH = configure_PbeePATH()
