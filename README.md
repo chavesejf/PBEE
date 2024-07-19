@@ -63,7 +63,7 @@ git clone https://github.com/chavesejf/pbee
 Open the terminal and run the following commands:
 
 ```
-cd /path/to/pbee/folder
+cd /path/to/pbee/dir
 pip3 install -r requirements.txt
 source ./etc/install-libgfortran3.sh
 cp ./etc/DAlphaBall.gcc /path/to/rosetta/folder/main/source/external/DAlpahBall
@@ -71,21 +71,23 @@ cp ./etc/DAlphaBall.gcc /path/to/rosetta/folder/main/source/external/DAlpahBall
 
 ## Arguments description
 
-| Argument          | Mandatory | Description |
-|-------------------|-----------|-------------|
-| -\-ipdb            | Yes      | Input files in the PDB format |
-| -\-partner1        | Yes      | Chain ID of the binding partner (e.g.: receptor) |
-| -\-partner2        | Yes      | Chain ID of the binding partner (e.g.: ligand) |
-| -\-odir            | No       | Folder path to save the output files |
-| -\-ion_dist_cutoff | No       | Cutoff distance to detect ion(s) close to the protein atoms |          
-| -\-force_mode      | No       | Ignore warning messages and continue |
+| Argument            | Mandatory | Description |
+|---------------------|-----------|-------------|
+| -\-ipdb             | Yes       | Input file(s) in the PDB format |
+| -\-partner1         | Yes       | Chain ID of the binding partner (e.g.: receptor) |
+| -\-partner2         | Yes       | Chain ID of the binding partner (e.g.: ligand) |
+| -\-odir             | No        | Output directory |
+| -\-mlengine         | No        | Define the machine learning engine |
+| -\-ion_dist_cutoff  | No        | Cutoff distance to detect ion(s) close to the protein atoms |          
+| -\-allow_bad_struct | No        | Skip warning messages about gap(s) in the structure |
+| -\-allow_bad_scores | No        | Skip warning messages about bad descriptors |
 
 ## Usage
 
 The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are labeled “A” and “B” chain, respectively, while lysozyme C (receptor) is labeled “C”. Therefore, the PBEE should be run as follows:
 
 ``` 
-cd /path/to/pbee/folder
+cd /path/to/pbee/dir
 ```
 ```
 python3 pbee.py --ipdb ./test/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./test
