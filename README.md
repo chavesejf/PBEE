@@ -71,9 +71,8 @@ source /path/to/pbee/folder/etc/install-libgfortran3.sh
 ```
 
 ```
-cp /path/to/pbee/folder/DAlphaBall.gcc
+cp /path/to/pbee/folder/DAlphaBall.gcc /path/to/rosetta/folder/main/source/external/DAlpahBall
 ```
-
 
 #### Step 3 - 
 
