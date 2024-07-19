@@ -58,11 +58,15 @@ flowchart TB
 git clone https://github.com/chavesejf/pbee
 ```
 
-#### Step 2 - Open the terminal (ctrl + alt + t) and run the following command: 
+#### Step 2 - Installing requirements 
+
+Open the terminal (ctrl + alt + t) and run the following command:
 
 ```
 pip3 install -r requirements.txt
 ```
+
+#### Step 3 - 
 
 ## Arguments description
 
@@ -73,11 +77,11 @@ pip3 install -r requirements.txt
 | -\-partner2        | Yes      | Chain ID of the binding partner (e.g.: ligand) |
 | -\-odir            | No       | Folder path to save the output files |
 | -\-ion_dist_cutoff | No       | Cutoff distance to detect ion(s) close to the protein atoms |          
-| -\-force_mode      | No       | Skip warning messages and continue |
+| -\-force_mode      | No       | Ignore warning messages and continue |
 
 ## Usage
 
-The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are coded as chain "A" and "B", respectively, while Lysozyme C (receptor) is coded as "C". Therefore, the PBEE should be run as follows:
+The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are labeled “A” and “B” chain, respectively, while lysozyme C (receptor) is labeled “C”. Therefore, the PBEE should be run as follows:
 
 ``` 
 cd /path/to/pbee/folder
@@ -87,8 +91,6 @@ python3 pbee.py --ipdb ./test/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./
 ```
 
 The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_outputs/1xgu`.
-
-
 
 ## Description of the Rosetta XML script
 
