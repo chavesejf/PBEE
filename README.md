@@ -63,7 +63,7 @@ git clone https://github.com/chavesejf/pbee
 Open the terminal and run the following commands
 
 ```
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt & source ./etc/install-libgfortran3.sh
 ```
 
 #### Step 3 - 
