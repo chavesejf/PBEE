@@ -60,7 +60,7 @@ git clone https://github.com/chavesejf/pbee
 
 #### Step 2 - Installing requirements 
 
-Open the terminal (ctrl + alt + t) and run the following command:
+Open the terminal and run the following commands
 
 ```
 pip3 install -r requirements.txt
