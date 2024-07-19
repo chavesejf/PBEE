@@ -56,7 +56,7 @@ def pre_processing(pdbfiles):
             if gap != 0:
                 print_infos(message=f'[{mol}] warning: {gap} gap(s) found -> {os.path.basename(partner)}', type='info')
                 total_gaps += gap
-        if total_gaps > 0 and force_mode is False:
+        if total_gaps > 0 and allow_bad_structures is False:
             bad_structures.append(pdb)
             shutil.rmtree(outdir); continue
     return bad_structures
@@ -103,7 +103,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
         # ------------------------------------------------------------------------
         if not os.path.isfile(f'{outdir}/dG_pred.csv'):
             print_infos(message=f'[{mol}] geometry optimization and interface analysis', type='protocol')
-            rosetta_features = get_interface_features(_pdb, ions, _xml, outdir)
+            rosetta_features = get_interface_features(_pdb, ions, _xml, outdir, submit_dir)
 
             # checkpoint
             condition = True
@@ -128,7 +128,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
             x_train = pd.read_csv(f'{PbeePATH}/train_file.csv', delimiter=',').drop(columns=columns_to_remove)
             y_train = pd.read_csv(f'{PbeePATH}/train_file.csv', delimiter=',')['dG_exp']
         
-            if skip_outliers is False:
+            if allow_bad_scores is False:
                 outliers = detect_outliers(x_train, rosetta_features, mol)
                 if outliers != 0:
                     continue
@@ -265,14 +265,14 @@ def scorejd2(pdbfile,basename,outdir):
     subprocess.run(command, stdout=subprocess.PIPE, shell=True)
     return f'{outdir}/{basename}_jd2_0001.pdb'
 
-def get_interface_features(pdbfile,ions,xml,outdir):
+def get_interface_features(pdbfile,ions,xml,outdir,submit_dir):
     if len(ions) != 0:
         json_file = f'{outdir}/score_ion_rlx.sc'
         command = f'\
         rosetta_scripts.default.linuxgccrelease \
         -s {pdbfile} \
         -parser:protocol {xml} \
-        -holes:dalphaball $ROSETTA3/external/DAlpahBall/DAlphaBall.gcc \
+        -holes:dalphaball {submit_dir}/etc/DAlphaBall.gcc \
         -ex1 -ex2 -ex2aro \
         -auto_setup_metals \
         -beta_nov16 \
@@ -290,7 +290,7 @@ def get_interface_features(pdbfile,ions,xml,outdir):
         rosetta_scripts.default.linuxgccrelease \
         -s {pdbfile} \
         -parser:protocol {xml} \
-        -holes:dalphaball $ROSETTA3/external/DAlpahBall/DAlphaBall.gcc \
+        -holes:dalphaball {submit_dir}/etc/DAlphaBall.gcc \
         -ex1 -ex2 -ex2aro \
         -beta_nov16 \
         -use_input_sc \
@@ -407,16 +407,16 @@ def configure_requirements(PbeePATH):
 
 def configure_mlmodels(PbeePATH):
     trainedmodels = [
-        f'{PbeePATH}/trainedmodels/base_model_LinearRegression.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_ElasticNet.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_SVR.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_DecisionTreeRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_KNeighborsRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_AdaBoostRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_BaggingRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_RandomForestRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_ExtraTreesRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/base_model_XGBRegressor.pkl']
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_LinearRegression.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_ElasticNet.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_SVR.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_DecisionTreeRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_KNeighborsRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_AdaBoostRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_BaggingRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_RandomForestRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_ExtraTreesRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_XGBRegressor.pkl']
     for item in trainedmodels:
         if os.path.isfile(item) is True:
             continue
@@ -425,22 +425,25 @@ def configure_mlmodels(PbeePATH):
 
     return trainedmodels
 
-def header( ):
-    print('')
-    print(' ====================================================')
-    print('   Protein Engineering and Structural Genomic Group  ')    
-    print('               Oswaldo Cruz Foundation               ')
-    print(' ----------------------------------------------------')
-    print('')
-    print(' ********* Protein Binding Energy Estimator *********')
-    print('')
-    print(' Authors: Lins, RD and Chaves, EJF')
-    print('     DOI: -')
-    print(' version: -')
-    print(' ====================================================')
-    print('')
+def header(version):
+    print( '')
+    print( ' ====================================================')
+    print( '   Protein Engineering and Structural Genomic Group  ')    
+    print( '          Oswaldo Cruz Foundation - FIOCRUZ          ')
+    print( ' ----------------------------------------------------')
+    print( '')
+    print( ' ********* Protein Binding Energy Estimator *********')
+    print( '')
+    print( ' Authors: Roberto Lins & Elton Chaves')
+    print( '     DOI: -')
+    print(f' Version: {version}')
+    print( ' ====================================================')
+    print( '')
 
 if (__name__ == "__main__"):
+    # Versão do script
+    version = 1.0
+
     # Define o tempo de início do script
     st = time.time()
 
@@ -448,7 +451,7 @@ if (__name__ == "__main__"):
     submit_dir = os.getcwd()
 
     # Imprime o cabeçalho na tela
-    header()
+    header(version)
 
     # Define PbeePATH
     PbeePATH = configure_PbeePATH()
@@ -457,7 +460,7 @@ if (__name__ == "__main__"):
     # Define modelo ML
     trainedmodels = configure_mlmodels(PbeePATH)
     mlmodels = {
-        'sl': f'{PbeePATH}/trainedmodels/super_learner_model.pkl',
+        'sl': f'{PbeePATH}/trainedmodels/v{version}/v{version}__SuperLearner.pkl',
         'lr': trainedmodels[0],
         'en': trainedmodels[1],
         'sv': trainedmodels[2],
@@ -474,34 +477,38 @@ if (__name__ == "__main__"):
     # ---------------------------------
     parser = argparse.ArgumentParser()
     mandatory = parser.add_argument_group('mandatory arguments')
+    
     # obrigatórios
     mandatory.add_argument('--ipdb', nargs='+', type=str, required=True, metavar='',
-    help='str | input file(s) in the PDB format')
+    help='str | input file(s) in the PDB format') 
     mandatory.add_argument('--partner1', nargs=1, type=str, required=True, metavar='',
     help='str | chain ID of the binding partner (e.g.: receptor)')
     mandatory.add_argument('--partner2', nargs=1, type=str, required=True, metavar='',
     help='str | chain ID of the binding partner (e.g.: ligand)')
-    parser.add_argument('--odir', nargs=1, type=isdir, required=True, metavar='', 
-    help=f'str | folder path to save the output files (default={submit_dir})')
+    
     # opcionais
+    parser.add_argument('--odir', nargs=1, type=isdir, default=[submit_dir], metavar='', 
+    help=f'str | output directory (default={submit_dir})')
     parser.add_argument('--mlengine', nargs=1, type=str, default=['sl'], choices=['sl','lr','en','sv','dt','kn','ad','bg','rf','et','xb'], metavar='',
-    help='str |')
+    help='str | define the machine learning engine (sl, lr, en, sv, dt, kn, ad, bg, rf, et, or xb)')
     parser.add_argument('--ion_dist_cutoff', nargs=1, type=int, default=[2], metavar='',
     help='int | cutoff distance (Å) to detect ion(s) close to the protein atoms (default=2)')
-    parser.add_argument('--force_mode', action='store_true',
-    help='skip warning messages and continue')
+    parser.add_argument('--allow_bad_struct', action='store_true',
+    help='skip warning messages about gap(s) in the structure')
+    parser.add_argument('--allow_bad_scores', action='store_true',
+    help='skip warning messages about bad descriptors')
 
     # ---
-    args            = parser.parse_args()
-    pdbfiles        = args.ipdb
-    partner1        = args.partner1[0]
-    partner2        = args.partner2[0]
-    odir            = args.odir[0]
-    force_mode      = args.force_mode
-    ion_dist_cutoff = args.ion_dist_cutoff[0]
-    mlengine        = args.mlengine[0]
-    mlmodel         = mlmodels[mlengine]
-    skip_outliers   = False
+    args             = parser.parse_args()
+    pdbfiles         = args.ipdb
+    partner1         = args.partner1[0]
+    partner2         = args.partner2[0]
+    odir             = args.odir[0]
+    mlengine         = args.mlengine[0]
+    mlmodel          = mlmodels[mlengine]
+    ion_dist_cutoff  = args.ion_dist_cutoff[0]
+    allow_bad_struct = args.allow_bad_struct
+    allow_bad_scores = args.allow_bad_scores
     
     # Mostra parâmetros do script na tela
     # -----------------------------------
@@ -512,13 +519,14 @@ if (__name__ == "__main__"):
     print(f'      output_dir: {odir}')
     print(f'        partner1: {partner1}')
     print(f'        partner2: {partner2}')
-    print(f'      force_mode: {force_mode}')
+    print(f'allow_bad_struct: {allow_bad_struct}')
+    print(f'allow_bad_scores: {allow_bad_scores}')
     print(f' ion_dist_cutoff: {ion_dist_cutoff}')
 
     # Pré-processamento
     # -----------------
     bad_structures = pre_processing(pdbfiles)
-    if force_mode is False:
+    if allow_bad_struct is False:
         pdbfiles = [item for item in pdbfiles if item not in bad_structures]
     else:
         pass
