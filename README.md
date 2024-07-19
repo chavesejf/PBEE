@@ -62,15 +62,18 @@ git clone https://github.com/chavesejf/pbee
 
 Open the terminal and run the following commands:
 
-command 1
 ```
-pip3 install -r requirements.txt
+pip3 install -r /path/to/pbee/folder/requirements.txt
 ```
 
-command 2
 ```
-source ./etc/install-libgfortran3.sh
+source /path/to/pbee/folder/etc/install-libgfortran3.sh
 ```
+
+```
+cp /path/to/pbee/folder/DAlphaBall.gcc
+```
+
 
 #### Step 3 - 
 
