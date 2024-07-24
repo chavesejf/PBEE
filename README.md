@@ -66,7 +66,15 @@ Open the terminal and run the following commands:
 cd /path/to/pbee/dir
 pip3 install -r requirements.txt
 source ./etc/install-libgfortran3.sh
-cp ./etc/DAlphaBall.gcc /path/to/rosetta/folder/main/source/external/DAlpahBall
+cp ./etc/DAlphaBall.gcc /path/to/rosetta/dir/main/source/external/DAlpahBall
+```
+
+#### Step 3 - Download/Update base models
+
+Go to the following link and download the latest version of the base models, then run the following commands:
+```
+unzip v1.0-20240724T171548Z-001.zip
+mv -r v1.0 ./trainedmodels
 ```
 
 ## Arguments description
