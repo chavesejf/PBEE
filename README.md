@@ -71,16 +71,14 @@ cp ./etc/DAlphaBall.gcc /path/to/rosetta/dir/main/source/external/DAlpahBall
 
 #### Step 3 - Download/Update base models
 
-Download the latest version of the ML models at the following link
+Download the latest version of the ML models at the following link:
 https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=drive_link
 
 Once the ML models have been downloaded, run the commands below:
 ```
-unzip v1.0-20240724T171548Z-001.zip
-
 cd /path/to/pbee/dir
-mkdir trainedmodels
-mv -r ./v1.0 ./trainedmodels
+mkdir ./trainedmodels
+unzip v1.0-<file_id>.zip -d /path/to/pbee/dir/trainedmodels
 ```
 
 ## Arguments description
