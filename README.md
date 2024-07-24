@@ -72,6 +72,7 @@ cp ./etc/DAlphaBall.gcc /path/to/rosetta/dir/main/source/external/DAlpahBall
 #### Step 3 - Download/Update base models
 
 Go to the following link and download the latest version of the base models, then run the following commands:
+link -> https://drive.google.com/drive/folders/18QTOdDFfUqj90oVtRhNJC2WCghA19Tjp?usp=drive_link
 ```
 unzip v1.0-20240724T171548Z-001.zip
 mv -r ./v1.0 ./trainedmodels
