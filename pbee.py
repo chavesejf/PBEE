@@ -272,7 +272,7 @@ def get_interface_features(pdbfile,ions,xml,outdir,submit_dir):
         rosetta_scripts.default.linuxgccrelease \
         -s {pdbfile} \
         -parser:protocol {xml} \
-        -holes:dalphaball {submit_dir}/etc/DAlphaBall.gcc \
+        -holes:dalphaball $ROSETTA3/source/external/DAlphaBall/DAlphaBall.gcc \
         -ex1 -ex2 -ex2aro \
         -auto_setup_metals \
         -beta_nov16 \
@@ -290,7 +290,7 @@ def get_interface_features(pdbfile,ions,xml,outdir,submit_dir):
         rosetta_scripts.default.linuxgccrelease \
         -s {pdbfile} \
         -parser:protocol {xml} \
-        -holes:dalphaball {submit_dir}/etc/DAlphaBall.gcc \
+        -holes:dalphaball $ROSETTA3/source/external/DalphaBall/DAlphaBall.gcc \
         -ex1 -ex2 -ex2aro \
         -beta_nov16 \
         -use_input_sc \
