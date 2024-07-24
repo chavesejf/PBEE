@@ -460,7 +460,7 @@ if (__name__ == "__main__"):
     # Define modelo ML
     trainedmodels = configure_mlmodels(PbeePATH)
     mlmodels = {
-        'sl': f'{PbeePATH}/trainedmodels/v{version}/v{version}__SuperLearner.pkl',
+        'sl': f'{PbeePATH}/trainedmodels/{version}/{version}__SuperLearner.pkl',
         'lr': trainedmodels[0],
         'en': trainedmodels[1],
         'sv': trainedmodels[2],
