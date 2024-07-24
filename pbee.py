@@ -56,7 +56,7 @@ def pre_processing(pdbfiles):
             if gap != 0:
                 print_infos(message=f'[{mol}] warning: {gap} gap(s) found -> {os.path.basename(partner)}', type='info')
                 total_gaps += gap
-        if total_gaps > 0 and allow_bad_structures is False:
+        if total_gaps > 0 and allow_bad_struct is False:
             bad_structures.append(pdb)
             shutil.rmtree(outdir); continue
     return bad_structures
