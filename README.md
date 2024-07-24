@@ -71,7 +71,7 @@ cp ./etc/DAlphaBall.gcc /path/to/rosetta/dir/main/source/external/DAlpahBall
 
 #### Step 3 - Download/Update base models
 
-Download the latest version of the ML models at the following link:
+Download the latest version of the ML models (ex.: v1.0-<file_id>.zip) at the following link:
 https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=drive_link
 
 Once the ML models have been downloaded, run the commands below:
