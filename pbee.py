@@ -272,7 +272,7 @@ def get_interface_features(pdbfile,ions,xml,outdir,submit_dir):
         rosetta_scripts.default.linuxgccrelease \
         -s {pdbfile} \
         -parser:protocol {xml} \
-        -holes:dalphaball $ROSETTA3/source/external/DAlpahBall/DAlpahBall.gcc \
+        -holes:dalphaball $ROSETTA3/external/DAlpahBall/DAlphaBall.gcc \
         -ex1 -ex2 -ex2aro \
         -auto_setup_metals \
         -beta_nov16 \
@@ -290,7 +290,7 @@ def get_interface_features(pdbfile,ions,xml,outdir,submit_dir):
         rosetta_scripts.default.linuxgccrelease \
         -s {pdbfile} \
         -parser:protocol {xml} \
-        -holes:dalphaball $ROSETTA3/source/external/DAlpahBall/DAlpahBall.gcc \
+        -holes:dalphaball $ROSETTA3/external/DAlpahBall/DAlphaBall.gcc \
         -ex1 -ex2 -ex2aro \
         -beta_nov16 \
         -use_input_sc \
@@ -407,16 +407,16 @@ def configure_requirements(PbeePATH):
 
 def configure_mlmodels(PbeePATH):
     trainedmodels = [
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_LinearRegression.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_ElasticNet.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_SVR.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_DecisionTreeRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_KNeighborsRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_AdaBoostRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_BaggingRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_RandomForestRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_ExtraTreesRegressor.pkl',
-        f'{PbeePATH}/trainedmodels/v{version}/v{version}__basemodel_XGBRegressor.pkl']
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_LinearRegression.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_ElasticNet.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_SVR.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_DecisionTreeRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_KNeighborsRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_AdaBoostRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_BaggingRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_RandomForestRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_ExtraTreesRegressor.pkl',
+        f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_XGBRegressor.pkl']
     for item in trainedmodels:
         if os.path.isfile(item) is True:
             continue
@@ -442,7 +442,7 @@ def header(version):
 
 if (__name__ == "__main__"):
     # Versão do script
-    version = 1.0
+    version = 'v1.0'
 
     # Define o tempo de início do script
     st = time.time()
@@ -512,16 +512,18 @@ if (__name__ == "__main__"):
     
     # Mostra parâmetros do script na tela
     # -----------------------------------
-    print(f'    rosetta_path: {os.environ["ROSETTA3"]}')
-    print(f'    rosetta_path: {os.environ["ROSETTA3_BIN"]}')
-    print(f'    rosetta_path: {os.environ["ROSETTA3_TOOLS"]}')
+    print(f'            info: rosetta_path -> {os.environ["ROSETTA3"]}')
+    print(f'            info: rosetta_path -> {os.environ["ROSETTA3_BIN"]}')
+    print(f'            info: rosetta_path -> {os.environ["ROSETTA3_TOOLS"]}')
     print(f'        mlengine: {mlmodel}')
     print(f'      output_dir: {odir}')
     print(f'        partner1: {partner1}')
     print(f'        partner2: {partner2}')
-    print(f'allow_bad_struct: {allow_bad_struct}')
-    print(f'allow_bad_scores: {allow_bad_scores}')
     print(f' ion_dist_cutoff: {ion_dist_cutoff}')
+    if allow_bad_struct is True:
+        print(f'allow_bad_struct: {allow_bad_struct}')
+    if allow_bad_scores is True:
+        print(f'allow_bad_scores: {allow_bad_scores}')
 
     # Pré-processamento
     # -----------------
