@@ -75,6 +75,9 @@ Go to the following link and download the latest version of the base models, the
 link -> https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=drive_link
 ```
 unzip v1.0-20240724T171548Z-001.zip
+
+cd /path/to/pbee/dir
+mkdir trainedmodels
 mv -r ./v1.0 ./trainedmodels
 ```
 
