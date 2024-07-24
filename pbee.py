@@ -54,7 +54,7 @@ def pre_processing(pdbfiles):
         total_gaps = 0
         for partner, gap in zip(partners, gaps):
             if gap != 0:
-                print_infos(message=f'[{mol}] warning: {gap} gap(s) found -> {os.path.basename(partner)}', type='info')
+                print_infos(message=f'[{mol}] warning: {gap} gap(s) found.', type='info')
                 total_gaps += gap
         if total_gaps > 0 and allow_bad_struct is False:
             bad_structures.append(pdb)
