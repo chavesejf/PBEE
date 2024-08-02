@@ -38,6 +38,7 @@ flowchart TB
 
 | Package        | Version |
 |----------------|---------|
+| Ubuntu OS      |         |
 | python         | 3.10    |
 | RosettaCommons | 3.12    |
 | scikit-learn   | 1.3.0   |
