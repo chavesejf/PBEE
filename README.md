@@ -67,7 +67,6 @@ Open the terminal and run the following commands:
 ```
 cd /path/to/pbee/dir
 pip3 install -r requirements.txt
-source ./etc/install-libgfortran3.sh
 cp ./etc/DAlphaBall.gcc /path/to/rosetta/dir/main/source/external/DAlpahBall
 ```
 
