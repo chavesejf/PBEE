@@ -46,7 +46,7 @@ flowchart TB
 | numpy          | 1.24.4  |
 | pandas         | 2.0.3   |
 
-**⚠️ Warning**: This script has been tested on Ubuntu and Linux Mint.
+**⚠️ Warning**: This script has been tested on Linux Mint 21.2 Cinnamon.
 
 **⚠️ Warning**: RosettaCommons binaries are not available in this repository and must be installed and configured correctly before running PBEE. More information on downloading, installing and configuring can be found on the software's website (https://www.rosettacommons.org/).
 
