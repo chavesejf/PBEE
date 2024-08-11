@@ -92,8 +92,8 @@ unzip v1.0-<file_id>.zip -d /path/to/pbee/dir/trainedmodels
 | -\-odir             | No        | Output directory |
 | -\-mlengine         | No        | Define the machine learning engine |
 | -\-ion_dist_cutoff  | No        | Cutoff distance to detect ion(s) close to the protein atoms |          
-| -\-allow_bad_struct | No        | Skip warning messages about gap(s) in the structure |
-| -\-allow_bad_scores | No        | Skip warning messages about bad descriptors |
+| -\-allow_bad_struct | No        | Ignores warning messages about structure(s) with gap(s) |
+| -\-allow_bad_scores | No        | Ignores warning messages about low-quality descriptors |
 
 ## Usage
 
