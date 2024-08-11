@@ -56,7 +56,7 @@ def pre_processing(pdbfiles):
             if gap != 0:
                 print_infos(message=f'[{mol}] warning: {gap} gap(s) found.', type='info')
                 total_gaps += gap
-        if total_gaps > 0 and allow_bad_struct is False:
+        if total_gaps > 0 and frcmod_struct is False:
             bad_structures.append(pdb)
             shutil.rmtree(outdir); continue
     return bad_structures
@@ -128,7 +128,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
             x_train = pd.read_csv(f'{PbeePATH}/train_file.csv', delimiter=',').drop(columns=columns_to_remove)
             y_train = pd.read_csv(f'{PbeePATH}/train_file.csv', delimiter=',')['dG_exp']
         
-            if allow_bad_scores is False:
+            if frcmod_scores is False:
                 outliers = detect_outliers(x_train, rosetta_features, mol)
                 if outliers != 0:
                     continue
@@ -434,8 +434,8 @@ def header(version):
     print( '')
     print( ' ********* Protein Binding Energy Estimator *********')
     print( '')
-    print( ' Authors: Roberto Lins & Elton Chaves')
-    print( '     DOI: -')
+    print( ' Authors: Roberto Lins, Elton Chaves')
+    print( '     DOI: 10.26434/chemrxiv-2023-zq1nj')
     print(f' Version: {version}')
     print( ' ====================================================')
     print( '')
@@ -493,10 +493,10 @@ if (__name__ == "__main__"):
     help='str | define the machine learning engine (sl, lr, en, sv, dt, kn, ad, bg, rf, et, or xb)')
     parser.add_argument('--ion_dist_cutoff', nargs=1, type=int, default=[2], metavar='',
     help='int | cutoff distance (Å) to detect ion(s) close to the protein atoms (default=2)')
-    parser.add_argument('--allow_bad_struct', action='store_true',
-    help='skip warning messages about gap(s) in the structure')
-    parser.add_argument('--allow_bad_scores', action='store_true',
-    help='skip warning messages about bad descriptors')
+    parser.add_argument('--frcmod_struct', action='store_true',
+    help='ignores warning messages about structure(s) with gap(s)')
+    parser.add_argument('--frcmod_scores', action='store_true',
+    help='ignores warning messages about low-quality descriptors')
 
     # ---
     args             = parser.parse_args()
@@ -507,8 +507,8 @@ if (__name__ == "__main__"):
     mlengine         = args.mlengine[0]
     mlmodel          = mlmodels[mlengine]
     ion_dist_cutoff  = args.ion_dist_cutoff[0]
-    allow_bad_struct = args.allow_bad_struct
-    allow_bad_scores = args.allow_bad_scores
+    frcmod_struct = args.frcmod_struct
+    frcmod_scores = args.frcmod_scores
     
     # Mostra parâmetros do script na tela
     # -----------------------------------
@@ -520,15 +520,15 @@ if (__name__ == "__main__"):
     print(f'        partner1: {partner1}')
     print(f'        partner2: {partner2}')
     print(f' ion_dist_cutoff: {ion_dist_cutoff}')
-    if allow_bad_struct is True:
-        print(f'allow_bad_struct: {allow_bad_struct}')
-    if allow_bad_scores is True:
-        print(f'allow_bad_scores: {allow_bad_scores}')
+    if frcmod_struct is True:
+        print(f'frcmod_struct: {frcmod_struct}')
+    if frcmod_scores is True:
+        print(f'frcmod_scores: {frcmod_scores}')
 
     # Pré-processamento
     # -----------------
     bad_structures = pre_processing(pdbfiles)
-    if allow_bad_struct is False:
+    if frcmod_struct is False:
         pdbfiles = [item for item in pdbfiles if item not in bad_structures]
     else:
         pass
