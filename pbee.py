@@ -157,7 +157,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
             f'{outdir}/{basename}_jd2_01.pdb',
             f'{outdir}/{basename}_jd2_02.pdb',
             f'{outdir}/{basename}_jd2_0001.pdb',
-            f'{outdir}/score.sc', 
+            f'{outdir}/score.sc',
             f'{outdir}/score_rlx.csv'])
 
 def remove_files(files):
@@ -394,10 +394,22 @@ def configure_requirements(PbeePATH):
             print(f' error (rosetta_path): {item} is not an environment variable.\n')
             count += 1; continue
     if count == 0:
-        r1 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/score_jd2.default.*')[0]
-        r2 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.default.*')[0]
-        r3 = f'{os.environ["ROSETTA3_TOOLS"]}/protein_tools/scripts/clean_pdb.py'
-        requirements = [r1, r2, r3]
+        r1 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/score_jd2.default.*')
+        r2 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/score_jd2.static.*')
+        r3 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.default.*')
+        r4 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.static.*')
+        r5 = f'{os.environ["ROSETTA3_TOOLS"]}/protein_tools/scripts/clean_pdb.py'
+        
+        if os.path.isfile(r1[0]):
+            r1 = r1[0]
+        elif os.path.isfile(r2[0]):
+            r1 = r2[0]
+        if os.path.isfile(r3[0]):
+            r2 = r3[0]
+        elif os.path.isfile(r4[0]):
+            r2 = r4[0]
+        
+        requirements = [r1, r2, r5]
         for item in requirements:
             condition = istool(item)
             if condition is False:
