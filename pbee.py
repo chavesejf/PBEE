@@ -400,13 +400,13 @@ def configure_requirements(PbeePATH):
         r4 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.static.*')
         r5 = f'{os.environ["ROSETTA3_TOOLS"]}/protein_tools/scripts/clean_pdb.py'
         
-        if os.path.isfile(r1[0]):
+        if len(r1) != 0:
             r1 = r1[0]
-        elif os.path.isfile(r2[0]):
+        elif len(r2) != 0:
             r1 = r2[0]
-        if os.path.isfile(r3[0]):
+        if len(r3) != 0:
             r2 = r3[0]
-        elif os.path.isfile(r4[0]):
+        elif len(r4) != 0:
             r2 = r4[0]
         
         requirements = [r1, r2, r5]
