@@ -133,7 +133,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
                 if outliers != 0:
                     continue
 
-            print_infos(message=f'[{mol}] calculating dGbind', type='protocol')
+            print_infos(message=f'[{mol}] calculating ΔG[bind]', type='protocol')
             dG_pred = predictor(trainedmodels, mlmodel, x_train, y_train, rosetta_features, columns_to_remove)
             affinity = calc_affinity(dG_pred)
             rosetta_features.insert(0, 'pdb',      basename)
@@ -143,13 +143,13 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
             rosetta_features.to_csv(f'{outdir}/dG_pred.csv', index=False)
 
             # 7.3 Mostra os dados de dG_pred na tela
-            print_infos(message=f'[{mol}] dGbind = {dG_pred:.3f} kcal/mol ({affinity} M)', type='protocol')
+            print_infos(message=f'[{mol}] ΔG[bind] = {dG_pred:.3f} kcal/mol (KD = {affinity} M)', type='protocol')
 
         else:
             data = pd.read_csv(f'{outdir}/dG_pred.csv', delimiter=',')
             dG_pred = data['dG_pred'][0]
             affinity = calc_affinity(dG_pred)
-            print_infos(message=f'[{mol}] dGbind = {dG_pred:.3f} kcal/mol ({affinity} M)', type='protocol')
+            print_infos(message=f'[{mol}] ΔG[bind] = {dG_pred:.3f} kcal/mol (KD = {affinity} M)', type='protocol')
 
         # 8 Apaga arquivos temporários
         remove_files(files=[
