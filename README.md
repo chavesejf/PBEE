@@ -52,6 +52,8 @@ flowchart TB
 
 **⚠️ Warning**: After installing Rosetta on your workstation, it is essential that you compile the DAlphaBall executable in source/external/DAlpahBall. This is done by navigating to main/source/external/DAlpahBall and typing make. (You may need to make platform-specific settings in the Makefile.)
 
+**⚠️ Warning**: After installing Rosetta on your workstation, you may need to substitute the python scripts "amino_acids.py" and "clean_pdb" on the path "rosetta/tools/protein_tools/scripts/" to the scripts found on the rosetta commons repository (https://github.com/RosettaCommons/tools/tree/main/protein_tools/scripts). 
+
 ## Download & Install
 
 #### Step 1 - Clone this repository on your computer or download it:
