@@ -138,7 +138,7 @@ The following is an example of a Rosetta XML script used in the PBEE. In general
 <MOVERS>
 	<MinMover name="min1" scorefxn="beta" jump="1" max_iter="50000" tolerance="0.0001" cartesian="0" bb="0" chi="1" bb_task_operations="init" chi_task_operations="init"/>
 	<MinMover name="min2" scorefxn="beta" jump="1" max_iter="50000" tolerance="0.0001" cartesian="0" bb="1" chi="1" bb_task_operations="init" chi_task_operations="init"/>
-	<InterfaceAnalyzerMover name="ifa" scorefxn="beta" interface="A_B" packstat="1" interface_sc="1" tracer="1" scorefile_reporting_prefix="ifa"/>
+	<InterfaceAnalyzerMover name="ifa" scorefxn="beta" interface="AB_C" packstat="1" interface_sc="1" tracer="1" scorefile_reporting_prefix="ifa"/>
 	<RunSimpleMetrics name="iesum" metrics="ie"/>
 </MOVERS>
 <PROTOCOLS>
