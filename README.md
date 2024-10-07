@@ -105,7 +105,7 @@ The example below includes the structure of an antibody (HyHEL-63) that binds to
 cd /path/to/pbee/dir
 ```
 ```
-python3 pbee.py --ipdb ./test/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./test
+python3 pbee.py --ipdb ./tests/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./test
 ```
 
 The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_outputs/1xgu`.
