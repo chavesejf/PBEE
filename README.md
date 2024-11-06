@@ -46,31 +46,11 @@ flowchart TB
 | numpy          | 1.24.4  |
 | pandas         | 2.0.3   |
 
-**⚠️ Warning**: PBEE has not (yet) been designed for environments such as conda, so you may encounter problems when running in this mode.
-
-**⚠️ Warning**: RosettaCommons binaries are not available in this repository and must be installed and configured correctly before running PBEE. More information on downloading, installing and configuring can be found on the software's website (https://www.rosettacommons.org/).
-
-**⚠️ Warning**: After installing Rosetta on your workstation, it is essential that you compile the DAlphaBall executable in source/external/DAlpahBall. This is done by navigating to main/source/external/DAlpahBall and typing make. (You may need to make platform-specific settings in the Makefile.)
-
-**⚠️ Warning**: After installing Rosetta on your workstation, you may need to substitute the python scripts "amino_acids.py" and "clean_pdb" on the path "rosetta/tools/protein_tools/scripts/" to the scripts found on the rosetta commons repository (https://github.com/RosettaCommons/tools/tree/main/protein_tools/scripts). 
-
 ## Download & Install
 
-#### Step 1 - Clone this repository on your computer or download it:
+#### Step 1 - Conda
 
-```
-git clone https://github.com/chavesejf/pbee
-```
-
-#### Step 2 - Installing requirements 
-
-Open the terminal and run the following commands:
-
-```
-cd /path/to/pbee/dir
-pip3 install -r requirements.txt
-cp ./etc/DAlphaBall.gcc /path/to/rosetta/dir/main/source/external/DAlpahBall
-```
+#### Step 2 -
 
 #### Step 3 - Download/Update base models
 
