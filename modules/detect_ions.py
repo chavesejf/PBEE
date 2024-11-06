@@ -3,9 +3,9 @@
 
 import math
 
-def detect_ions(pdbfile,cutoff,chains):
-    ion_types = ['MG','CA','NA','CL','FE','K','ZN','MN']
-    ptn_coords = []
+def detect_ions(pdbfile, cutoff, chains):
+    ion_types      = ['MG','CA','NA','CL','FE','K','ZN','MN']
+    ptn_coords     = []
     ion_coords_all = []
     ion_coords_str = []
     with open(pdbfile, 'r') as f:
@@ -29,10 +29,11 @@ def detect_ions(pdbfile,cutoff,chains):
                 ion_x = float(ion[1][31:38])
                 ion_y = float(ion[1][39:46])
                 ion_z = float(ion[1][47:54])
-                # calcula distância entre o ion e átomo da proteína
-                dist = calculate_dist(atom_x,atom_y,atom_z,ion_x,ion_y,ion_z)
+                # calcula distância entre o íon e átomo da proteína
+                dist = calculate_dist(atom_x, atom_y, atom_z, ion_x, ion_y, ion_z)
                 if dist <= cutoff:
-                    ion_coords_str.append(ion)
+                    if ion not in ion_coords_str:
+                        ion_coords_str.append(ion)
     return ion_coords_str
 
 def calculate_dist(x1,y1,z1,x2,y2,z2):
