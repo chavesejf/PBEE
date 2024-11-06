@@ -38,9 +38,8 @@ flowchart TB
 
 | Package        | Version |
 |----------------|---------|
-| Ubuntu OS      |         |
 | python         | 3.10    |
-| RosettaCommons | 3.12    |
+| PyRosetta      | 2024    |
 | scikit-learn   | 1.3.0   |
 | xgboost        | 2.0.1   |
 | numpy          | 1.24.4  |
