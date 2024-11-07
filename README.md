@@ -94,7 +94,7 @@ unzip v1.0-<file_id>.zip -d /path/to/pbee/dir/trainedmodels
 | -\-frcmod_scores    | No        | Ignores warning messages about low-quality descriptors |
 
 ## Usage
-
+# Example 1
 The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are labeled “A” and “B” chain, respectively, while lysozyme C (receptor) is labeled “C”. Therefore, the PBEE should be run as follows:
 
 ``` 
