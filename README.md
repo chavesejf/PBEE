@@ -64,6 +64,7 @@ git clone https://github.com/chavesejf/PBEE.git
 
 #### Step 3 - Create pbee_env in Conda
 ```
+cd /path/to/pbee/path
 conda env create -f environment.yml
 conda activate pbee_env
 ```
