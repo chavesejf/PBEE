@@ -64,7 +64,8 @@ git clone https://github.com/chavesejf/PBEE.git
 
 #### Step 3 - Create pbee_env in Conda
 ```
-cd /path/to/pbee
+PBEE_PATH=<path_to_pbee_directory>
+cd $PBEE_PATH
 conda env create -f environment.yml
 conda activate pbee_env
 ```
@@ -82,9 +83,9 @@ https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=dri
 
 Once the ML models have been downloaded, run the commands below:
 ```
-cd /path/to/pbee
-mkdir ./trainedmodels
-unzip v1.1-<file_id>.zip -d /path/to/pbee/trainedmodels
+cd $PBEE_PATH
+mkdir $PBEE_PATH/trainedmodels
+unzip v1.1-<file_id>.zip -d $PBEE_PATH/trainedmodels
 ```
 
 ## Arguments description
@@ -108,7 +109,7 @@ The example below includes the structure of an antibody (HyHEL-63) that binds to
 cd /path/to/pbee/dir
 ```
 ```
-python3 pbee.py --ipdb ./tests/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./test
+python3 pbee.py --ipdb ./tests/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./tests
 ```
 
 The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_outputs/1xgu`.
