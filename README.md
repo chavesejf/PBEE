@@ -46,20 +46,29 @@ flowchart TB
 | pandas         | 2.0.3   |
 
 ## Download & Install
+#### Step 1 - Install Conda (if not already installed)
 
-#### Step 1 - Create pbee_env in Conda
+If Conda is not already installed on your system, follow the instructions below to download and install it:
+
+1. Visit the [Anaconda installation page](https://www.anaconda.com/download/success).
+2. Download the Anaconda installer for your operating system.
+3. Follow the installation instructions on the page to complete the setup.
+
+After installing Anaconda, you should be able to use `conda` commands in your terminal.
+
+#### Step 2 - Create pbee_env in Conda
 ```
 conda env create -f environment.yml
 conda activate pbee_env
 ```
 
-#### Step 2 - Install PyRosetta in pbee_env
+#### Step 3 - Install PyRosetta in pbee_env
 ```
 pip install pyrosetta-installer
 python -c 'import pyrosetta_installer; pyrosetta_installer.install_pyrosetta()'
 ```
 
-#### Step 3 - Download/Update base models
+#### Step 4 - Download/Update base models
 
 Download the latest version of the ML models (ex.: v1.0-<file_id>.zip) at the following link:
 https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=drive_link
