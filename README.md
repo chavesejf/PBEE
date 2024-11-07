@@ -56,21 +56,22 @@ If Conda is not already installed on your system, follow the instructions below 
 
 After installing Anaconda, you should be able to use `conda` commands in your terminal.
 
-#### Step 2 - Create pbee_env in Conda
+#### Step 2 - Clone the repository
+
+```
+git clone https://github.com/chavesejf/PBEE.git
+```
+
+#### Step 3 - Create pbee_env in Conda
 ```
 conda env create -f environment.yml
 conda activate pbee_env
 ```
 
-#### Step 3 - Install PyRosetta in pbee_env
+#### Step 4 - Install PyRosetta in pbee_env
 ```
 pip install pyrosetta-installer
 python -c 'import pyrosetta_installer; pyrosetta_installer.install_pyrosetta()'
-```
-#### Step 4 - Clone the repository
-
-```
-git clone https://github.com/chavesejf/PBEE.git
 ```
 
 #### Step 5 - Download/Update base models
