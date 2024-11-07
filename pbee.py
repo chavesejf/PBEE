@@ -2,24 +2,31 @@
 
 # ===================================================================================
 # Name.......: PBEE - Protein Binding Energy Estimator
-# Authors....: Roberto D. Lins and Elton J. F. Chaves
+# Authors....: Roberto D. Lins, Elton J. F. Chaves, and João Sartori
 # Contact....: linsrd@gmail.com
 # Description: A pipeline that used ML model based on Rosetta descriptors to predict
 #              the binding affinity of protein-protein complexes.
 # ===================================================================================
 from modules.detect_ions  import *
 from modules.detect_gaps  import *
-from modules.rosettaXML   import *
 from modules.superlearner import *
+from modules.rosetta_descriptors import Get_descriptors
 from shutil import which
-import os, math, time, shutil, argparse, subprocess, glob
+from pyrosetta import *
 import pandas as pd
+import os
+import math
+import time
+import glob
+import shutil
+import argparse
+import subprocess
 
 def pre_processing(pdbfiles):
     bad_structures = []
     for mol, pdb in enumerate(pdbfiles):
         basename = os.path.basename(pdb[:-4])
-        outdir = f'{args.odir[0]}/outputs_pbee/{basename}'
+        outdir = f'{args.odir[0]}/pbee_outputs/{basename}'
 
         # Verifica se o(s) arquivo(s) estão no formato PDB
         condition = ispdb(pdb)
@@ -61,10 +68,10 @@ def pre_processing(pdbfiles):
             shutil.rmtree(outdir); continue
     return bad_structures
 
-def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
+def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st):
     for mol, pdb in enumerate(pdbfiles):
         basename = os.path.basename(pdb[:-4])
-        outdir = f'{args.odir[0]}/outputs_pbee/{basename}'
+        outdir = f'{args.odir[0]}/pbee_outputs/{basename}'
 
         # 1. concatena estruturas de partner1 e partner2
         # ----------------------------------------------
@@ -83,7 +90,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
             with open(_pdb, 'r') as f:
                 lines = f.readlines()
             for ion in ions:
-                for i,line in enumerate(lines):
+                for i, line in enumerate(lines):
                     if line.startswith('ATOM') and line[21] == ion[1][21]:
                         index = i
                 lines.insert(index + 1, ion[1])
@@ -94,71 +101,68 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel):
         _pdb = scorejd2(_pdb, basename, outdir)
         
         # 4. previne erros no rosetta
-        _pdb = preventing_errors(_pdb, basename, outdir)
-
-        # 5. prepara o script .xml
-        _xml = prepareXML(outdir, basename, partner1, partner2)
+        _pdb, total_atoms = preventing_errors(_pdb, basename, outdir)
 
         # 6. executa o protocolo de minimização e calcula descritores de interface
         # ------------------------------------------------------------------------
+        train_file_columns = pd.read_csv(f"{PbeePATH}/trainedmodels/{version}/{version}__pbee_train_file.csv")
+        train_file_columns = train_file_columns.drop(columns=['pdb', 'database', 'partner1', 'partner2', 'dG_exp'])
+        columns_to_remove  = ['pdb', 'database', 'partner1', 'partner2', 'dG_exp']
+        x_train = pd.read_csv(f'{PbeePATH}/trainedmodels/{version}/{version}__pbee_train_file.csv', delimiter=',').drop(columns=columns_to_remove)
+        y_train = pd.read_csv(f'{PbeePATH}/trainedmodels/{version}/{version}__pbee_train_file.csv', delimiter=',')['dG_exp']
+        
+        # ---
         if not os.path.isfile(f'{outdir}/dG_pred.csv'):
             print_infos(message=f'[{mol}] geometry optimization and interface analysis', type='protocol')
-            rosetta_features = get_interface_features(_pdb, ions, _xml, outdir, submit_dir)
+            pose, rosetta_features = Get_descriptors(_pdb, ions, outdir, basename, partner1, partner2)
+            selected_columns = [col for col in train_file_columns if col in rosetta_features.columns]
+            rosetta_features = rosetta_features[selected_columns]
 
+            # salva arquivo .pdb
+            if len(ions) != 0:
+                pose.dump_pdb(f'{outdir}/{basename}_ions_rlx.pdb')
+            else:
+                pose.dump_pdb(f'{outdir}/{basename}_rlx.pdb')
+            
             # checkpoint
-            condition = True
-            with open(rosetta_features, 'r') as f:
-                lines = f.readlines()
-                for line in lines:
-                    if line.__contains__('-nan'):
-                        condition = False
-            if condition is False:
+            condition = not rosetta_features.applymap(lambda x: '-nan' in str(x)).any().any()
+            if condition is False or rosetta_features['ifa_sc_value'][0] == -1:
                 print_infos(message=f'[{mol}] an incorrect descriptor was found, ignoring the structure to avoid errors', type='protocol')
                 continue
-            else:
-                rosetta_features = pd.read_csv(json2csv(rosetta_features, outdir), delimiter=',').iloc[:,1:]
-                if rosetta_features['sc'][0] == -1:
-                    print_infos(message=f'[{mol}] an incorrect descriptor was found, ignoring the structure to avoid errors', type='protocol')
-                    continue
 
             # -------------
             # 7. calcula dG
             # -------------
-            columns_to_remove = ['decoy', 'database', 'partner1', 'partner2', 'complex_type', 'affinity', 'classifier', 'dG_exp']
-            x_train = pd.read_csv(f'{PbeePATH}/train_file.csv', delimiter=',').drop(columns=columns_to_remove)
-            y_train = pd.read_csv(f'{PbeePATH}/train_file.csv', delimiter=',')['dG_exp']
-        
             if frcmod_scores is False:
                 outliers = detect_outliers(x_train, rosetta_features, mol)
                 if outliers != 0:
                     continue
-
-            print_infos(message=f'[{mol}] calculating ΔG[bind]', type='protocol')
-            dG_pred = predictor(trainedmodels, mlmodel, x_train, y_train, rosetta_features, columns_to_remove)
-            affinity = calc_affinity(dG_pred)
-            rosetta_features.insert(0, 'pdb',      basename)
-            rosetta_features.insert(1, 'dG_pred',  dG_pred)
-            rosetta_features.insert(2, 'affinity', affinity)
-            rosetta_features.insert(3, 'mlengine', mlengine)
-            rosetta_features.to_csv(f'{outdir}/dG_pred.csv', index=False)
-
-            # 7.3 Mostra os dados de dG_pred na tela
-            print_infos(message=f'[{mol}] ΔG[bind] = {dG_pred:.3f} kcal/mol (KD = {affinity} M)', type='protocol')
-
         else:
-            data = pd.read_csv(f'{outdir}/dG_pred.csv', delimiter=',')
-            dG_pred = data['dG_pred'][0]
-            affinity = calc_affinity(dG_pred)
-            print_infos(message=f'[{mol}] ΔG[bind] = {dG_pred:.3f} kcal/mol (KD = {affinity} M)', type='protocol')
+            rosetta_features = pd.read_csv(f'{outdir}/dG_pred.csv', delimiter=',')
+            selected_columns = [col for col in train_file_columns if col in rosetta_features.columns]
+            rosetta_features = rosetta_features[selected_columns]
+
+        # ---
+        print_infos(message=f'[{mol}] calculating ΔG[bind]', type='protocol')
+        dG_pred = predictor(trainedmodels, mlengine, mlmodel, x_train, y_train, rosetta_features, columns_to_remove)
+        affinity = calc_affinity(dG_pred)
+        print_dG(mol, dG_pred, affinity)
+        total_time = processing_time(st)
+
+        # ---
+        rosetta_features.insert(0, 'pdb',             basename)
+        rosetta_features.insert(1, 'dG_pred',         dG_pred)
+        rosetta_features.insert(2, 'affinity',        affinity)
+        rosetta_features.insert(3, 'mlengine',        mlengine)
+        rosetta_features.insert(4, 'total_atoms',     total_atoms)
+        rosetta_features.insert(5, 'processing_time', total_time)
+        rosetta_features.to_csv(f'{outdir}/dG_pred.csv', index=False)
 
         # 8 Apaga arquivos temporários
         remove_files(files=[
             glob.glob(f'{outdir}/*fasta'),
             f'{outdir}/{basename}_jd2_01.pdb',
-            f'{outdir}/{basename}_jd2_02.pdb',
-            f'{outdir}/{basename}_jd2_0001.pdb',
-            f'{outdir}/score.sc',
-            f'{outdir}/score_rlx.csv'])
+            f'{outdir}/{basename}_jd2_02.pdb'])
 
 def remove_files(files):
     for file in files:
@@ -204,15 +208,6 @@ def calc_affinity(dG):
     affinity = float(f'{math.exp(dG_J / (R * T)):.6e}')
     return affinity
 
-def json2csv(json_file, outdir):
-    outfile = f'{outdir}/score_rlx.csv'
-    df = pd.read_json(json_file, orient='records', lines=True)
-    df.rename(columns={
-        "ifa_dG_separated/dSASAx100":"ifa_dG_separated_dSASAx100",
-        "ifa_dG_cross/dSASAx100":"ifa_dG_cross_dSASAx100"}, inplace=True)
-    df.to_csv(outfile, index=False)
-    return outfile
-
 def preventing_errors(pdbfile, basename, outdir):
     pdb1 = f'{outdir}/{basename}_jd2_01.pdb'
     with open(pdbfile, "r") as input_file, open(pdb1, "w") as output_file:
@@ -229,17 +224,21 @@ def preventing_errors(pdbfile, basename, outdir):
                     output_file.write("END" + line[3:])
                 else:
                     output_file.write(line)
-    pdb2 = f'{outdir}/{basename}_jd2_02.pdb'
+    # ---
+    atoms = 0
+    pdb2  = f'{outdir}/{basename}_jd2_02.pdb'
     with open(pdb1, 'r') as inpfile, open(pdb2, 'w') as outfile:
         for line in inpfile:
             if not line.startswith('SSBOND'):
                 outfile.write(line)
-    return pdb2
+                if line.startswith('ATOM') or line.startswith('HETATM'):
+                    atoms += 1
+    return pdb2, atoms
 
 def pdbcleaner(pdbfile, basename, outdir, submit_dir, partner1, partner2):
     commands = [
-        f'python $ROSETTA3_TOOLS/protein_tools/scripts/clean_pdb.py {pdbfile} {partner1}',
-        f'python $ROSETTA3_TOOLS/protein_tools/scripts/clean_pdb.py {pdbfile} {partner2}',
+        f'python {PbeePATH}/modules/clean_pdb.py {pdbfile} {partner1}',
+        f'python {PbeePATH}/modules/clean_pdb.py {pdbfile} {partner2}',
         f'mv {submit_dir}/{basename}_{partner1}.pdb {outdir}',
         f'mv {submit_dir}/{basename}_{partner2}.pdb {outdir}',
         f'mv {submit_dir}/{basename}_*.fasta {outdir}']
@@ -255,54 +254,22 @@ def concat_pdbs(outdir, basename, partner1, partner2):
     return outfile
 
 def scorejd2(pdbfile,basename,outdir):
-    command = f'\
-    score_jd2.default.linuxgccrelease \
-    -s {pdbfile} -renumber_pdb \
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w')
+    
+    pyrosetta.init(extra_options="\
+    -corrections::beta_nov16 true \
+    -mute core \
+    -mute basic \
     -ignore_unrecognized_res \
-    -out:pdb \
-    -out:path:all {outdir} \
-    -output_pose_energies_table false'
-    subprocess.run(command, stdout=subprocess.PIPE, shell=True)
+    -output_pose_energies_table false \
+    -renumber_pdb")
+    pose = rosetta.core.import_pose.pose_from_file(pdbfile)
+    pose.dump_pdb(f'{outdir}/{basename}_jd2_0001.pdb')
+    
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
     return f'{outdir}/{basename}_jd2_0001.pdb'
-
-def get_interface_features(pdbfile,ions,xml,outdir,submit_dir):
-    if len(ions) != 0:
-        json_file = f'{outdir}/score_ion_rlx.sc'
-        command = f'\
-        rosetta_scripts.default.linuxgccrelease \
-        -s {pdbfile} \
-        -parser:protocol {xml} \
-        -holes:dalphaball $ROSETTA3/external/DAlpahBall/DAlphaBall.gcc \
-        -ex1 -ex2 -ex2aro \
-        -auto_setup_metals \
-        -beta_nov16 \
-        -use_input_sc \
-        -flip_HNQ \
-        -no_optH false \
-        -out:suffix _ion_rlx \
-        -out:file:scorefile_format json \
-        -out:path:score {outdir} \
-        -out:path:all {outdir} \
-        -output_pose_energies_table false'
-    else:
-        json_file = f'{outdir}/score_rlx.sc'
-        command = f'\
-        rosetta_scripts.default.linuxgccrelease \
-        -s {pdbfile} \
-        -parser:protocol {xml} \
-        -holes:dalphaball $ROSETTA3/external/DAlpahBall/DAlphaBall.gcc \
-        -ex1 -ex2 -ex2aro \
-        -beta_nov16 \
-        -use_input_sc \
-        -flip_HNQ \
-        -no_optH false \
-        -out:suffix _rlx \
-        -out:file:scorefile_format json \
-        -out:path:score {outdir} \
-        -out:path:all {outdir} \
-        -output_pose_energies_table false'
-    subprocess.run(command, stdout=subprocess.PIPE, shell=True)
-    return json_file
 
 def ispdb(pdbfile):
     with open(pdbfile, 'r') as file:
@@ -331,7 +298,7 @@ def processing_time(st):
         sum_x += i
     time.sleep(1)
     elapsed_time = time.time() - st
-    print(' processing time:', time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
+    return elapsed_time
 
 def print_infos(message, type):
     if type == 'info':
@@ -342,6 +309,9 @@ def print_infos(message, type):
         print(f'        protocol: {message}')
     if type == 'none':
         print(f' {message}')
+
+def print_dG(mol, dG_pred, affinity):
+    print_infos(message=f'[{mol}] ΔG[bind] = {dG_pred:.3f} kcal/mol (KD = {affinity} M)', type='protocol')
 
 def print_end():
     exit('\n --- End process ---\n')
@@ -363,7 +333,7 @@ def train_base_models(x, y, models):
         trained_models.append((model.__class__.__name__, model))
     return trained_models
 
-def predictor(trainedmodels, mlmodel, x, y, rosetta_features, columns_to_remove):
+def predictor(trainedmodels, mlengine, mlmodel, x, y, rosetta_features, columns_to_remove):
     with open(mlmodel, 'rb') as f:
         meta_model = joblib.load(f)
     if mlengine != 'sl':
@@ -385,38 +355,6 @@ def configure_PbeePATH():
     else:
         return PbeePATH
 
-def configure_requirements(PbeePATH):
-    RosettaPATHS = ['ROSETTA3', 'ROSETTA3_BIN', 'ROSETTA3_TOOLS']
-    count = 0
-    for item in RosettaPATHS:
-        condition = os.environ.get(item)
-        if condition is None:
-            print(f' error (rosetta_path): {item} is not an environment variable.\n')
-            count += 1; continue
-    if count == 0:
-        r1 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/score_jd2.default.*')
-        r2 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/score_jd2.static.*')
-        r3 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.default.*')
-        r4 = glob.glob(f'{os.environ["ROSETTA3_BIN"]}/rosetta_scripts.static.*')
-        r5 = f'{os.environ["ROSETTA3_TOOLS"]}/protein_tools/scripts/clean_pdb.py'
-        
-        if len(r1) != 0:
-            r1 = r1[0]
-        elif len(r2) != 0:
-            r1 = r2[0]
-        if len(r3) != 0:
-            r2 = r3[0]
-        elif len(r4) != 0:
-            r2 = r4[0]
-        
-        requirements = [r1, r2, r5]
-        for item in requirements:
-            condition = istool(item)
-            if condition is False:
-                print(f' error: requirement not found -> {item}\n'); exit()
-    else:
-        exit()
-
 def configure_mlmodels(PbeePATH):
     trainedmodels = [
         f'{PbeePATH}/trainedmodels/{version}/{version}__basemodel_LinearRegression.pkl',
@@ -434,27 +372,28 @@ def configure_mlmodels(PbeePATH):
             continue
         else:
             print(f' requirement not found: {item}'); print_end()
-
     return trainedmodels
 
 def header(version):
     print( '')
-    print( ' ====================================================')
+    print( ' =====================================================')
     print( '   Protein Engineering and Structural Genomic Group  ')    
     print( '          Oswaldo Cruz Foundation - FIOCRUZ          ')
-    print( ' ----------------------------------------------------')
+    print( ' -----------------------------------------------------')
     print( '')
-    print( ' ********* Protein Binding Energy Estimator *********')
+    print( ' ********* Protein Binding Energy Estimator **********')
     print( '')
-    print( ' Authors: Roberto Lins, Elton Chaves')
+    print( ' Authors: Roberto Lins, Elton Chaves, and João Sartori')
     print( '     DOI: 10.26434/chemrxiv-2023-zq1nj')
     print(f' Version: {version}')
-    print( ' ====================================================')
+    print( ' =====================================================')
     print( '')
 
 if (__name__ == "__main__"):
+    warnings.filterwarnings("ignore")
+    
     # Versão do script
-    version = 'v1.0'
+    version = 'v1.1'
 
     # Define o tempo de início do script
     st = time.time()
@@ -467,7 +406,6 @@ if (__name__ == "__main__"):
 
     # Define PbeePATH
     PbeePATH = configure_PbeePATH()
-    configure_requirements(PbeePATH)
 
     # Define modelo ML
     trainedmodels = configure_mlmodels(PbeePATH)
@@ -503,7 +441,7 @@ if (__name__ == "__main__"):
     help=f'str | output directory (default={submit_dir})')
     parser.add_argument('--mlengine', nargs=1, type=str, default=['sl'], choices=['sl','lr','en','sv','dt','kn','ad','bg','rf','et','xb'], metavar='',
     help='str | define the machine learning engine (sl, lr, en, sv, dt, kn, ad, bg, rf, et, or xb)')
-    parser.add_argument('--ion_dist_cutoff', nargs=1, type=int, default=[2], metavar='',
+    parser.add_argument('--ion_dist_cutoff', nargs=1, type=float, default=[2], metavar='',
     help='int | cutoff distance (Å) to detect ion(s) close to the protein atoms (default=2)')
     parser.add_argument('--frcmod_struct', action='store_true',
     help='ignores warning messages about structure(s) with gap(s)')
@@ -511,31 +449,28 @@ if (__name__ == "__main__"):
     help='ignores warning messages about low-quality descriptors')
 
     # ---
-    args             = parser.parse_args()
-    pdbfiles         = args.ipdb
-    partner1         = args.partner1[0]
-    partner2         = args.partner2[0]
-    odir             = args.odir[0]
-    mlengine         = args.mlengine[0]
-    mlmodel          = mlmodels[mlengine]
-    ion_dist_cutoff  = args.ion_dist_cutoff[0]
-    frcmod_struct = args.frcmod_struct
-    frcmod_scores = args.frcmod_scores
+    args            = parser.parse_args()
+    pdbfiles        = args.ipdb
+    partner1        = args.partner1[0]
+    partner2        = args.partner2[0]
+    odir            = args.odir[0]
+    mlengine        = args.mlengine[0]
+    mlmodel         = mlmodels[mlengine]
+    ion_dist_cutoff = args.ion_dist_cutoff[0]
+    frcmod_struct   = args.frcmod_struct
+    frcmod_scores   = args.frcmod_scores
     
     # Mostra parâmetros do script na tela
     # -----------------------------------
-    print(f'            info: rosetta_path -> {os.environ["ROSETTA3"]}')
-    print(f'            info: rosetta_path -> {os.environ["ROSETTA3_BIN"]}')
-    print(f'            info: rosetta_path -> {os.environ["ROSETTA3_TOOLS"]}')
     print(f'        mlengine: {mlmodel}')
     print(f'      output_dir: {odir}')
     print(f'        partner1: {partner1}')
     print(f'        partner2: {partner2}')
     print(f' ion_dist_cutoff: {ion_dist_cutoff}')
     if frcmod_struct is True:
-        print(f'frcmod_struct: {frcmod_struct}')
+        print(f'   frcmod_struct: {frcmod_struct}')
     if frcmod_scores is True:
-        print(f'frcmod_scores: {frcmod_scores}')
+        print(f'   frcmod_scores: {frcmod_scores}')
 
     # Pré-processamento
     # -----------------
@@ -549,8 +484,10 @@ if (__name__ == "__main__"):
     # -----------------
     print_infos(message=f'total structures: {len(pdbfiles)}', type='info')
     if len(pdbfiles) != 0:
-        post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel)
+        post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st)
     else:
         print_infos(message='nothing to do', type='info'); print_end()
 
-    processing_time(st); print_end()
+    elapsed_time = processing_time(st)
+    print(' processing time:', time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
+    print_end()
