@@ -106,7 +106,7 @@ unzip v1.1-<file_id>.zip -d $PBEE_PATH/trainedmodels
 The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are labeled “A” and “B”, respectively, while lysozyme C (receptor) is labeled “C”. Therefore, the PBEE should be run as follows:
 
 ``` 
-cd /path/to/pbee/dir
+cd $PBEE_PATH
 ```
 ```
 python3 pbee.py --ipdb ./tests/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir ./tests
