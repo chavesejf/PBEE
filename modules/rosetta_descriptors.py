@@ -166,18 +166,24 @@ def Get_descriptors(pdb, ions, outdir, basename, partner1, partner2):
 
     if len(ions) != 0:  
         pyrosetta.init(extra_options="\
-        -corrections::beta_nov16 true \
         -mute core \
         -mute basic \
-        -ignore_unrecognized_res \
+        -ex1 -ex2 -ex2aro \
+        -use_input_sc \
+        -flip_HNQ \
+        -no_optH false \
+        -corrections::beta_nov16 true \
         -output_pose_energies_table false \
         -auto_setup_metals")
     else:
         pyrosetta.init(extra_options="\
-        -corrections::beta_nov16 true \
         -mute core \
         -mute basic \
-        -ignore_unrecognized_res \
+        -ex1 -ex2 -ex2aro \
+        -use_input_sc \
+        -flip_HNQ \
+        -no_optH false \
+        -corrections::beta_nov16 true \
         -output_pose_energies_table false")
     pose = rosetta.core.import_pose.pose_from_file(pdb)
     
