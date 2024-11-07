@@ -73,7 +73,7 @@ python -c 'import pyrosetta_installer; pyrosetta_installer.install_pyrosetta()'
 git clone https://github.com/chavesejf/PBEE.git
 ```
 
-#### Step 4 - Download/Update base models
+#### Step 5 - Download/Update base models
 
 Download the latest version of the ML models (ex.: v1.0-<file_id>.zip) at the following link:
 https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=drive_link
