@@ -64,7 +64,7 @@ git clone https://github.com/chavesejf/PBEE.git
 
 #### Step 3 - Create pbee_env in Conda
 ```
-cd /path/to/pbee/dir
+cd /path/to/pbee
 conda env create -f environment.yml
 conda activate pbee_env
 ```
@@ -82,9 +82,9 @@ https://drive.google.com/drive/folders/1tIIaVXekaGzlQ0Z-0NrxoZJbafohHWYg?usp=dri
 
 Once the ML models have been downloaded, run the commands below:
 ```
-cd /path/to/pbee/dir
+cd /path/to/pbee
 mkdir ./trainedmodels
-unzip v1.0-<file_id>.zip -d /path/to/pbee/dir/trainedmodels
+unzip v1.0-<file_id>.zip -d /path/to/pbee/trainedmodels
 ```
 
 ## Arguments description
