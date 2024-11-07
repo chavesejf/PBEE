@@ -84,7 +84,7 @@ Once the ML models have been downloaded, run the commands below:
 ```
 cd /path/to/pbee
 mkdir ./trainedmodels
-unzip v1.0-<file_id>.zip -d /path/to/pbee/trainedmodels
+unzip v1.1-<file_id>.zip -d /path/to/pbee/trainedmodels
 ```
 
 ## Arguments description
