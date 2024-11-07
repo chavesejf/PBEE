@@ -47,9 +47,17 @@ flowchart TB
 
 ## Download & Install
 
-#### Step 1 - Conda
+#### Step 1 - Create pbee_env in Conda
+```
+conda env create -f environment.yml
+conda activate pbee_env
+```
 
-#### Step 2 -
+#### Step 2 - Install PyRosetta in pbee_env
+```
+pip install pyrosetta-installer
+python -c 'import pyrosetta_installer; pyrosetta_installer.install_pyrosetta()'
+```
 
 #### Step 3 - Download/Update base models
 
