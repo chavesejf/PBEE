@@ -67,6 +67,11 @@ conda activate pbee_env
 pip install pyrosetta-installer
 python -c 'import pyrosetta_installer; pyrosetta_installer.install_pyrosetta()'
 ```
+#### Step 4 - Clone the repository
+
+```
+git clone https://github.com/chavesejf/PBEE.git
+```
 
 #### Step 4 - Download/Update base models
 
