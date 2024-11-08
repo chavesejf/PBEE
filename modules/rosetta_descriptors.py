@@ -168,7 +168,7 @@ def Get_descriptors(pdb, ions, outdir, basename, partner1, partner2):
         pyrosetta.init(extra_options="\
         -mute core \
         -mute basic \
-        -ex1 -ex2 -ex2aro \
+        -ex1 -ex2 -ex1aro -ex2aro \
         -use_input_sc \
         -flip_HNQ \
         -no_optH false \
@@ -179,7 +179,7 @@ def Get_descriptors(pdb, ions, outdir, basename, partner1, partner2):
         pyrosetta.init(extra_options="\
         -mute core \
         -mute basic \
-        -ex1 -ex2 -ex2aro \
+        -ex1 -ex2 -ex1aro -ex2aro \
         -use_input_sc \
         -flip_HNQ \
         -no_optH false \
