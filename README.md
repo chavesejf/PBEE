@@ -45,7 +45,7 @@ flowchart TB
 | numpy          | 1.24.4  |
 | pandas         | 2.0.3   |
 
-## 
+## Google Colab
 ## Download & Install
 #### Step 1 - Install Conda (if not already installed)
 
