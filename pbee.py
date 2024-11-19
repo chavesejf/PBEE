@@ -21,6 +21,8 @@ import glob
 import shutil
 import argparse
 import subprocess
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 def pre_processing(pdbfiles):
     bad_structures = []
