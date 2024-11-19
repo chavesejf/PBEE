@@ -7,6 +7,8 @@
 # Description: A pipeline that used ML model based on Rosetta descriptors to predict
 #              the binding affinity of protein-protein complexes.
 # ===================================================================================
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 from modules.detect_ions  import *
 from modules.detect_gaps  import *
 from modules.superlearner import *
@@ -21,8 +23,6 @@ import glob
 import shutil
 import argparse
 import subprocess
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
 
 def pre_processing(pdbfiles):
     bad_structures = []
