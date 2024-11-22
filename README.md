@@ -46,6 +46,8 @@ flowchart TB
 | pandas         | 2.0.3   |
 
 ## Google Colab
+[![Open in Colab](https://colab.research.google.com/drive/1lu1dC0yRltKK_Wp-gF26oHcZSCiHaI8b?usp=sharing#scrollTo=fY3nG-UFm-u4)
+
 ## Download & Install
 #### Step 1 - Install Conda (if not already installed)
 
