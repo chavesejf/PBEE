@@ -106,8 +106,7 @@ unzip v1.1-<file_id>.zip -d $PBEE_PATH/trainedmodels
 | -\-frcmod_scores    | No        | Ignores warning messages about low-quality descriptors |
 
 ## Usage
-#### Example 1:
-The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are labeled “A” and “B”, respectively, while lysozyme C (receptor) is labeled “C”. Therefore, the PBEE should be run as follows:
+#### Example #1: The example below includes the structure of an antibody (HyHEL-63) that binds to lysozyme C (PDB 1XGU) with a binding affinity of -11.28 kcal/mol. In the PDB file, the heavy and light chains of the antibody (ligand) are labeled “A” and “B”, respectively, while lysozyme C (receptor) is labeled “C”. Therefore, the PBEE should be run as follows:
 
 ``` 
 cd $PBEE_PATH
@@ -118,15 +117,8 @@ python3 pbee.py --ipdb ./tests/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir .
 
 The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_outputs/1xgu`.
 
-#### Example 2:
-
-#### Example 3:
-
-#### Example 4:
-
 ## Usage Note
-#### Note 1:
-PBEE renames the chains of the complex starting with the letters A, B, C, and so on. For example, if you use the HL_W interface, the PBEE will rewrite it as follows: AB_C.
+#### Note #1: PBEE renames the chains of the complex starting with the letters A, B, C, and so on. For example, if you use the HL_W interface, the PBEE will rewrite it as follows: AB_C.
 
 ## Description of the Rosetta XML script
 
