@@ -120,7 +120,8 @@ The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_o
 
 ## Usage Notes
 #### Note 1:
-PBEE renames the chains of the complex starting with the letters A, B, C, and so on. For example, if you use the HL_W interface, the PBEE will rewrite it as follows: AB_C.
+PBEE renames the chains of the complex starting with A, B, C, ... 
+Therefore, if you use the HL_W interface, the PBEE will rewrite it as follows: AB_C.
 
 ## Description of the Rosetta XML script
 
