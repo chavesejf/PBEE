@@ -124,6 +124,10 @@ The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_o
 
 #### Example 4:
 
+## Usage Note
+#### Note 1:
+PBEE renames the chains of the complex starting with the letters A, B, C, and so on. For example, if you use the HL_W interface, the PBEE will rewrite it as follows: AB_C.
+
 ## Description of the Rosetta XML script
 
 The following is an example of a Rosetta XML script used in the PBEE. In general, the script outlines a pipeline for analyzing and manipulating protein structures, utilizing a variety of scoring functions, residue selectors, simple metrics, filters, movers, and protocols. In this context, the script aims to assess and refine interactions between two protein chains, focusing on interaction energy and structural features. Furthermore, the script includes steps for minimization, energy metric calculation, and structure selection based on specific filters. 
