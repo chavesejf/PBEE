@@ -118,7 +118,7 @@ python3 pbee.py --ipdb ./tests/pdbs/1xgu.pdb --partner1 AB --partner2 C --odir .
 
 The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_outputs/1xgu`.
 
-## Usage Note
+## Usage Notes
 #### Note 1
 PBEE renames the chains of the complex starting with the letters A, B, C, and so on. For example, if you use the HL_W interface, the PBEE will rewrite it as follows: AB_C.
 
