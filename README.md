@@ -128,7 +128,8 @@ PBEE supports batch processing of multiple structures using the --ipdb flag. For
 ```
 python3 pbee.py --ipdb /path/to/your/files/*.pdb --partner1 AB --partner2 C
 ```
-This command processes all PDB files in the specified directory. However, running PBEE on large datasets, can be time-intensive depending on the complexity of the structures. To optimize performance, it is recommended to split the dataset into smaller batches and run PBEE separately for each batch.
+This command processes all PDB files in the specified directory. However, running PBEE on large datasets can be time-intensive depending on the complexity of the structures. PBEE performs each prediction on a single CPU core, which can further limit throughput for large datasets.
+To optimize performance, it is recommended to split the dataset into smaller batches and run PBEE on each batch in parallel, utilizing separate CPU cores for each batch. This approach can significantly accelerate the overall runtime.
 ## Description of the Rosetta XML script
 
 The following is an example of a Rosetta XML script used in the PBEE. In general, the script outlines a pipeline for analyzing and manipulating protein structures, utilizing a variety of scoring functions, residue selectors, simple metrics, filters, movers, and protocols. In this context, the script aims to assess and refine interactions between two protein chains, focusing on interaction energy and structural features. Furthermore, the script includes steps for minimization, energy metric calculation, and structure selection based on specific filters. 
