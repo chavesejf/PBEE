@@ -123,6 +123,12 @@ The above command will redirect the outputs to `/path/to/pbee/folder/test/pbee_o
 PBEE renames the chains of the complex starting with A, B, C, ... 
 Therefore, if you use the HL_W interface, PBEE will rewrite it as follows: AB_C.
 
+#### Note 2:
+PBEE supports batch processing of multiple structures using the --ipdb flag. For example:
+```
+python3 pbee.py --ipdb /path/to/your/files/*.pdb --partner1 AB --partner2 C
+```
+This command processes all PDB files in the specified directory. However, running PBEE on large datasets, can be time-intensive depending on the complexity of the structures. To optimize performance, it is recommended to split the dataset into smaller batches and run PBEE separately for each batch.
 ## Description of the Rosetta XML script
 
 The following is an example of a Rosetta XML script used in the PBEE. In general, the script outlines a pipeline for analyzing and manipulating protein structures, utilizing a variety of scoring functions, residue selectors, simple metrics, filters, movers, and protocols. In this context, the script aims to assess and refine interactions between two protein chains, focusing on interaction energy and structural features. Furthermore, the script includes steps for minimization, energy metric calculation, and structure selection based on specific filters. 
