@@ -3,37 +3,6 @@
 ## Overview
 PBEE (**P**rotein **B**inding **E**nergy **E**stimator) is an easy-to-use pipeline written in Python3 that use a ML model based on Rosetta descriptors to predict the free energy of binding of protein-protein complexes.
 
-The PBEE workflow is shown below:
-
-```mermaid
-flowchart TB
-	pdb[/PDB file/] 
-	step1[Extracts chains to a new pdb file] 
-	step2{Looks for gaps \n in the backbone}
-	step3[Checks for ions near \n protein atoms] 
-	step4[Remove non-protein atoms] 
-	step5["Geometry optimization \n (Rosetta)"] 
-	step6["Interface analysis \n (Rosetta)"] 
-	step7[SL engine]
-	result[dGbind]
-	ends[End process]
-	
-	subgraph B[ ]
-	step5 --> step6 --> step7
-	end 
-	
-	subgraph A[ ]
-	step1 --> step2
-	step2 --> |Yes| ends
-	step2 --> |No| step3
-	step3 --> step4
-	end 
-	
-	pdb -.- step1
-	step4 -.-> step5
-	step7 -.-> result
-``` 
-
 ## Requirements
 
 | Package        | Version |
@@ -91,7 +60,6 @@ cd $PBEE_PATH
 mkdir $PBEE_PATH/trainedmodels
 unzip v1.1-<file_id>.zip -d $PBEE_PATH/trainedmodels
 ```
-
 ## Arguments description
 
 | Argument            | Mandatory | Description |
@@ -130,6 +98,37 @@ python3 pbee.py --ipdb /path/to/your/files/*.pdb --partner1 AB --partner2 C
 ```
 This command processes all PDB files in the specified directory. However, running PBEE on large datasets can be time-intensive depending on the complexity of the structures. PBEE performs each prediction on a single CPU core, which can further limit throughput for large datasets.
 To optimize performance, it is recommended to split the dataset into smaller batches and run PBEE on each batch in parallel, utilizing separate CPU cores for each batch. This approach can significantly accelerate the overall runtime.
+
+## Workflow
+```mermaid
+flowchart TB
+	pdb[/PDB file/] 
+	step1[Extracts chains to a new pdb file] 
+	step2{Looks for gaps \n in the backbone}
+	step3[Checks for ions near \n protein atoms] 
+	step4[Remove non-protein atoms] 
+	step5["Geometry optimization \n (Rosetta)"] 
+	step6["Interface analysis \n (Rosetta)"] 
+	step7[SL engine]
+	result[dGbind]
+	ends[End process]
+	
+	subgraph B[ ]
+	step5 --> step6 --> step7
+	end 
+	
+	subgraph A[ ]
+	step1 --> step2
+	step2 --> |Yes| ends
+	step2 --> |No| step3
+	step3 --> step4
+	end 
+	
+	pdb -.- step1
+	step4 -.-> step5
+	step7 -.-> result
+``` 
+
 ## Description of the Rosetta XML script
 
 The following is an example of a Rosetta XML script used in the PBEE. In general, the script outlines a pipeline for analyzing and manipulating protein structures, utilizing a variety of scoring functions, residue selectors, simple metrics, filters, movers, and protocols. In this context, the script aims to assess and refine interactions between two protein chains, focusing on interaction energy and structural features. Furthermore, the script includes steps for minimization, energy metric calculation, and structure selection based on specific filters. 
