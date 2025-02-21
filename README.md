@@ -183,3 +183,17 @@ The following is an example of a Rosetta XML script used in the PBEE. In general
 In summary, the XML script represents a detailed plan for protein structure analysis and manipulation using Rosetta. It outlines a series of steps aimed at evaluating protein chain interactions and improving structure quality.
 
 ## Citation
+If you use our code and template, please cite our work:
+```
+@article{Chaves2025,
+  title = {Estimating Absolute Protein–Protein Binding Free Energies by a Super Learner Model},
+  ISSN = {1549-960X},
+  url = {http://dx.doi.org/10.1021/acs.jcim.4c01641},
+  DOI = {10.1021/acs.jcim.4c01641},
+  journal = {Journal of Chemical Information and Modeling},
+  publisher = {American Chemical Society (ACS)},
+  author = {Chaves,  Elton J. F. and Sartori,  João and Santos,  Whendel M. and Cruz,  Carlos H. B. and Mhrous,  Emmanuel N. and Nacimento-Filho,  Manassés F. and Ferraz,  Matheus V. F. and Lins,  Roberto D.},
+  year = {2025},
+  month = feb 
+}
+```
