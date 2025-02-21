@@ -1,7 +1,7 @@
 ![logo](https://github.com/chavesejf/pbee/blob/main/figures/toc_page-0001.jpg)
 
 ## Overview
-PBEE (**P**rotein **B**inding **E**nergy **E**stimator) is an easy-to-use pipeline written in Python3 that use a ML model based on Rosetta descriptors to predict the free energy of binding of protein-protein complexes. More details on PBEE training and validation can be found in our publication: [Link](https://pubs.acs.org/doi/10.1021/acs.jcim.4c01641)
+PBEE (**P**rotein **B**inding **E**nergy **E**stimator) is an easy-to-use pipeline written in Python3 that use a ML model based on Rosetta descriptors to predict the free energy of binding of protein-protein complexes. More details on PBEE training and validation can be found in our [publication](https://pubs.acs.org/doi/10.1021/acs.jcim.4c01641).
 
 ## Requirements
 
