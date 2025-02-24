@@ -15,7 +15,7 @@ PBEE (**P**rotein **B**inding **E**nergy **E**stimator) is an easy-to-use pipeli
 | pandas         | 2.0.3   |
 
 ## Google Colab
-Before install and run it locally, you can try the online version of PBEE in [Google Colab Notebook[(https://colab.research.google.com/drive/1lu1dC0yRltKK_Wp-gF26oHcZSCiHaI8b).
+Before install and run it locally, you can try the online version of PBEE in [Google Colab Notebook](https://colab.research.google.com/drive/1lu1dC0yRltKK_Wp-gF26oHcZSCiHaI8b).
 
 ## Download & Install
 #### Step 1 - Install Conda (if not already installed)
