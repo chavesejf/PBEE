@@ -36,9 +36,9 @@ def jd2_format(pdbfile, basename, outdir):
     pose = rosetta.core.import_pose.pose_from_file(pdbfile)
     pose.dump_pdb(f'{outdir}/{basename}_jd2_0001.pdb')
 
-# Define a função de minimização
+# Define the minimization function
 def minimize(pose, scorefxn, minimizer_type):
-    # Cria um MoveMap dependendo do tipo de minimização
+    # Creates a MoveMap depending on the type of minimization
     movemap = pyrosetta.rosetta.core.kinematics.MoveMap()
     if minimizer_type == 'minmover1':
         movemap.set_bb(False)
@@ -49,7 +49,7 @@ def minimize(pose, scorefxn, minimizer_type):
         movemap.set_chi(True)
         tolerance = 0.0001
 
-    # Cria o MinMover
+    # Creates the MinMover
     min_mover = rosetta.protocols.minimization_packing.MinMover()
     min_mover.score_function(scorefxn)
     min_mover.max_iter(50000)
@@ -57,7 +57,7 @@ def minimize(pose, scorefxn, minimizer_type):
     min_mover.cartesian(False)
     min_mover.movemap(movemap)
 
-    # Aplica a minimização à pose
+    # Applies energy minimization to pose
     min_mover.apply(pose)
 
 def Get_energy_per_term(pose, scorefxn):
