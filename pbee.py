@@ -30,18 +30,18 @@ def pre_processing(pdbfiles):
         basename = os.path.basename(pdb[:-4])
         outdir = f'{args.odir[0]}/pbee_outputs/{basename}'
 
-        # Verifica se o(s) arquivo(s) estão no formato PDB
+         # Checks if the file(s) are in PDB format
         condition = ispdb(pdb)
         if condition is not False:
             print_infos(message=f'[{mol}] {pdb}\r', type='structure')
-            # cria diretório para armazenar outputs
+            # create directory to store outputs
             if not os.path.isdir(outdir):
                 os.makedirs(outdir)
         else:
             print_infos(message=f'invalid PDB file -> {os.path.basename(pdb)}.', type='structure')
             continue
 
-        # 1. verifica se a estrutura contém partner1 e partner2
+        # 1. checks if the structure contains partner1 and partner2
         # -----------------------------------------------------
         chains = partner_checker(pdb, partner1, partner2)
         if chains[0] <= 1:
@@ -53,7 +53,7 @@ def pre_processing(pdbfiles):
             else:
                 continue
         
-        # 2. verifica se a estrutura contém gaps
+        # 2. checks if the structure contains gaps
         # --------------------------------------
         partners = pdbcleaner(pdb, basename, outdir, submit_dir, partner1, partner2)
         gaps = []
@@ -75,7 +75,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st):
         basename = os.path.basename(pdb[:-4])
         outdir = f'{args.odir[0]}/pbee_outputs/{basename}'
 
-        # 1. concatena estruturas de partner1 e partner2
+        # 1. concatenates partner1 and partner2 structures
         # ----------------------------------------------
         print_infos(message=f'[{mol}] {pdb}', type='protocol')
         partners = [
@@ -83,8 +83,8 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st):
             f'{outdir}/{basename}_{partner2}.pdb']
         _pdb = concat_pdbs(outdir, basename, partner1=partners[0], partner2=partners[1])
         
-        # 2. verifica se a estrutura original contém íon(s)
-        # se existir, recupera as coordenadas xyz do(s) íon(s) e insere na estrutura concatenada
+       # 2. checks if the original structure contains ion(s)
+        # if it does, retrieves the xyz coordinates of the ion(s) and inserts them into the concatenated structure
         # --------------------------------------------------------------------------------------
         ions = detect_ions(pdb, cutoff=ion_dist_cutoff, chains=[partner1, partner2])
         print_infos(message=f'[{mol}] total number of ions: {len(ions)}', type='protocol')  
@@ -99,13 +99,13 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st):
             with open(_pdb, 'w') as f:
                 f.writelines(lines)
 
-        # 3. executa o protocolo scorejd2
+         # 3. runs the scorejd2 protocol
         _pdb = scorejd2(_pdb, basename, outdir)
         
-        # 4. previne erros no rosetta
+        # 4. prevents errors in rosetta
         _pdb, total_atoms = preventing_errors(_pdb, basename, outdir)
 
-        # 6. executa o protocolo de minimização e calcula descritores de interface
+        # 6. runs the minimization protocol and calculates interface descriptors
         # ------------------------------------------------------------------------
         train_file_columns = pd.read_csv(f"{PbeePATH}/trainedmodels/{version}/{version}__pbee_train_file.csv")
         train_file_columns = train_file_columns.drop(columns=['pdb', 'database', 'partner1', 'partner2', 'dG_exp'])
@@ -133,7 +133,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st):
                 continue
 
             # -------------
-            # 7. calcula dG
+            # 7. calculates dG
             # -------------
             if frcmod_scores is False:
                 outliers = detect_outliers(x_train, rosetta_features, mol)
@@ -160,7 +160,7 @@ def post_processing(pdbfiles, partner1, partner2, trainedmodels, mlmodel, st):
         rosetta_features.insert(5, 'processing_time', total_time)
         rosetta_features.to_csv(f'{outdir}/dG_pred.csv', index=False)
 
-        # 8 Apaga arquivos temporários
+        # 8 Remove temporary files
         remove_files(files=[
             glob.glob(f'{outdir}/*fasta'),
             f'{outdir}/{basename}_jd2_01.pdb',
@@ -394,22 +394,22 @@ def header(version):
 if (__name__ == "__main__"):
     warnings.filterwarnings("ignore")
     
-    # Versão do script
+    # Script version
     version = 'v1.1'
 
-    # Define o tempo de início do script
+    # Sets the script start time
     st = time.time()
 
-    # Define variável que armazena o diretório de submissão
+    # Defines variable that stores the submission directory
     submit_dir = os.getcwd()
 
-    # Imprime o cabeçalho na tela
+    # Prints the header on the screen
     header(version)
 
     # Define PbeePATH
     PbeePATH = configure_PbeePATH()
 
-    # Define modelo ML
+    # Define ML model
     trainedmodels = configure_mlmodels(PbeePATH)
     mlmodels = {
         'sl': f'{PbeePATH}/trainedmodels/{version}/{version}__SuperLearner.pkl',
@@ -425,12 +425,12 @@ if (__name__ == "__main__"):
         'xb': trainedmodels[9]
     }
     
-    # Configura argumentos do script
+    # Set script arguments
     # ---------------------------------
     parser = argparse.ArgumentParser()
     mandatory = parser.add_argument_group('mandatory arguments')
     
-    # obrigatórios
+    # mandatory
     mandatory.add_argument('--ipdb', nargs='+', type=str, required=True, metavar='',
     help='str | input file(s) in the PDB format') 
     mandatory.add_argument('--partner1', nargs=1, type=str, required=True, metavar='',
@@ -438,7 +438,7 @@ if (__name__ == "__main__"):
     mandatory.add_argument('--partner2', nargs=1, type=str, required=True, metavar='',
     help='str | chain ID of the binding partner (e.g.: ligand)')
     
-    # opcionais
+    # optional
     parser.add_argument('--odir', nargs=1, type=isdir, default=[submit_dir], metavar='', 
     help=f'str | output directory (default={submit_dir})')
     parser.add_argument('--mlengine', nargs=1, type=str, default=['sl'], choices=['sl','lr','en','sv','dt','kn','ad','bg','rf','et','xb'], metavar='',
@@ -462,7 +462,7 @@ if (__name__ == "__main__"):
     frcmod_struct   = args.frcmod_struct
     frcmod_scores   = args.frcmod_scores
     
-    # Mostra parâmetros do script na tela
+    # Shows script parameters on screen
     # -----------------------------------
     print(f'        mlengine: {mlmodel}')
     print(f'      output_dir: {odir}')
@@ -474,7 +474,7 @@ if (__name__ == "__main__"):
     if frcmod_scores is True:
         print(f'   frcmod_scores: {frcmod_scores}')
 
-    # Pré-processamento
+    # Pre-processing
     # -----------------
     bad_structures = pre_processing(pdbfiles)
     if frcmod_struct is False:
@@ -482,7 +482,7 @@ if (__name__ == "__main__"):
     else:
         pass
     
-    # Pós-processamento
+    # Post-processing
     # -----------------
     print_infos(message=f'total structures: {len(pdbfiles)}', type='info')
     if len(pdbfiles) != 0:
