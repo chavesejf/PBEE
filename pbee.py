@@ -386,7 +386,7 @@ def header(version):
     print( ' ********* Protein Binding Energy Estimator **********')
     print( '')
     print( ' Authors: Roberto Lins, Elton Chaves, and João Sartori')
-    print( '     DOI: 10.26434/chemrxiv-2023-zq1nj')
+    print( '     DOI: 10.1021/acs.jcim.4c01641')
     print(f' Version: {version}')
     print( ' =====================================================')
     print( '')
