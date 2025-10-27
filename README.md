@@ -98,6 +98,9 @@ python3 pbee.py --ipdb /path/to/your/files/*.pdb --partner1 AB --partner2 C
 This command processes all PDB files in the specified directory. However, running PBEE on large datasets can be time-intensive depending on the complexity of the structures. PBEE performs each prediction on a single CPU core, which can further limit throughput for large datasets.
 To optimize performance, it is recommended to split the dataset into smaller batches and run PBEE on each batch in parallel, utilizing separate CPU cores for each batch. This approach can significantly accelerate the overall runtime.
 
+#### Note 3:
+PBEE has not been trained/testd on antibodies, so we no reference for this type of protein-protein complex. Keep this in mind; results for this type of molecule should be interpreted with caution.
+
 ## Workflow
 ```mermaid
 flowchart TB
